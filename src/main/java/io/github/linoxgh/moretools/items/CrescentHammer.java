@@ -20,7 +20,7 @@ import me.mrCookieSlime.Slimefun.Lists.RecipeType;
 import me.mrCookieSlime.Slimefun.Objects.Category;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.SlimefunItem;
 import me.mrCookieSlime.Slimefun.api.BlockStorage;
-import me.mrCookieSlime.Slimefun.api.SlimefunItemStack
+import me.mrCookieSlime.Slimefun.api.SlimefunItemStack;
 
 /**
  * A {@link CrescentHammer} is a {@link SlimefunItem} which allows you to break placed machine blocks
