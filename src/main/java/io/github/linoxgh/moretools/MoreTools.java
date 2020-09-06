@@ -8,6 +8,7 @@ import io.github.linoxgh.moretools.items.CrescentHammer;
 
 import io.github.thebusybiscuit.cscorelib2.item.CustomItem;
 import io.github.thebusybiscuit.slimefun4.api.SlimefunAddon;
+import io.github.thebusybiscuit.slimefun4.core.researching.Research;
 import io.github.thebusybiscuit.slimefun4.implementation.SlimefunItems;
 import me.mrCookieSlime.Slimefun.Lists.RecipeType;
 import me.mrCookieSlime.Slimefun.Objects.Category;
@@ -24,7 +25,7 @@ public class MoreTools extends JavaPlugin implements SlimefunAddon {
 
     @Override
     public void onEnable() {
-        intance = this;
+        instance = this;
         Config cfg = new Config(this);
 
         //if (cfg.getBoolean("options.auto-update")) {
@@ -62,7 +63,7 @@ public class MoreTools extends JavaPlugin implements SlimefunAddon {
     }
     
     private void registerResearch(String key, int id, String name, int defaultCost, ItemStack... items) {
-        Research research = new Research(new NamespacedKey(SlimefunPlugin.instance(), key), id, name, defaultCost);
+        Research research = new Research(new NamespacedKey(this, key), id, name, defaultCost);
         
         for (ItemStack item : items) {
             SlimefunItem sfItem = SlimefunItem.getByItem(item);
