@@ -1,4 +1,4 @@
-package io.github.linoxgh.MoreTools;
+package io.github.linoxgh.moretools;
 
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
