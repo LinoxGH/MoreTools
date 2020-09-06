@@ -6,7 +6,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import io.github.linoxgh.moretools.items.CrescentHammer;
 
-import io.github.thebusybiscuit.cscorelib2.item.CustomItem;
+import me.mrCookieSlime.Slimefun.cscorelib2.item.CustomItem;
 import io.github.thebusybiscuit.slimefun4.api.SlimefunAddon;
 import io.github.thebusybiscuit.slimefun4.core.researching.Research;
 import io.github.thebusybiscuit.slimefun4.implementation.SlimefunItems;
