@@ -4,5 +4,5 @@ description: Adds more useful tools to Slimefun!
 main: io.github.linoxgh.moretools.MoreTools
 website: https://github.com/LinoxGH/MoreTools
 depend: [Slimefun]
-ersion: ${project.version}
+version: ${project.version}
 api-version: 1.14
