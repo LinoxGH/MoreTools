@@ -6,10 +6,12 @@ import java.util.Optional;
 import org.bukkit.Bukkit;
 import org.bukkit.Effect;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
 
 import io.github.thebusybiscuit.cscorelib2.protection.ProtectableAction;
+import io.github.thebusybiscuit.slimefun4.core.attributes.DamageableItem;
 import io.github.thebusybiscuit.slimefun4.core.attributes.EnergyNetComponent;
 import io.github.thebusybiscuit.slimefun4.core.handlers.BlockBreakHandler;
 import io.github.thebusybiscuit.slimefun4.core.handlers.ItemUseHandler;
@@ -29,7 +31,7 @@ import me.mrCookieSlime.Slimefun.api.SlimefunItemStack;
  * @author Linox
  * 
  */
-public class CrescentHammer extends SimpleSlimefunItem<ItemUseHandler> {
+public class CrescentHammer extends SimpleSlimefunItem<ItemUseHandler> implements DamageableItem {
 
     public CrescentHammer(Category category, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe) {
         super(category, item, recipeType, recipe);
@@ -48,6 +50,7 @@ public class CrescentHammer extends SimpleSlimefunItem<ItemUseHandler> {
                    if (sfItem != null) {
                        if (sfItem instanceof EnergyNetComponent || sfItem.getID().startsWith("CARGO_NODE")) {
                        
+                           Player p = e.getPlayer();
                            BlockBreakEvent event = new BlockBreakEvent(b, p);
                            Bukkit.getPluginManager().callEvent(event);
                            b.getWorld().playEffect(b.getLocation(), Effect.STEP_SOUND, b.getType()); //TODO Make this configurable
