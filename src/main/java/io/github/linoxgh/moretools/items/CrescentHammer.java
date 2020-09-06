@@ -21,6 +21,7 @@ import io.github.thebusybiscuit.slimefun4.implementation.items.SimpleSlimefunIte
 import io.github.thebusybiscuit.slimefun4.implementation.items.cargo.CargoManager;
 import io.github.thebusybiscuit.slimefun4.implementation.items.cargo.ReactorAccessPort;
 import io.github.thebusybiscuit.slimefun4.implementation.items.cargo.TrashCan;
+import io.github.thebusybiscuit.slimefun4.implementation.items.electric.EnergyRegulator;
 import me.mrCookieSlime.Slimefun.Lists.RecipeType;
 import me.mrCookieSlime.Slimefun.Objects.Category;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.SlimefunItem;
@@ -51,7 +52,7 @@ public class CrescentHammer extends SimpleSlimefunItem<ItemUseHandler> implement
                     
                    SlimefunItem sfItem = BlockStorage.check(b);
                    if (sfItem != null) {
-                       if (sfItem instanceof EnergyNetComponent || sfItem.getID().startsWith("CARGO_NODE") || sfItem instanceof CargoManager || sfItem instanceof ReactorAccessPort || sfItem instanceof TrashCan) {
+                       if (sfItem instanceof EnergyNetComponent || sfItem instanceof EnergyRegulator || sfItem.getID().startsWith("CARGO_NODE") || sfItem instanceof CargoManager || sfItem instanceof ReactorAccessPort || sfItem instanceof TrashCan) {
                        
                            Player p = e.getPlayer();
                            BlockBreakEvent event = new BlockBreakEvent(b, p);
