@@ -6,7 +6,10 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import io.github.linoxgh.moretools.items.CrescentHammer;
 
+import me.mrCookieSlime.Slimefun.bstats.bukkit.Metrics;
 import me.mrCookieSlime.Slimefun.cscorelib2.item.CustomItem;
+import me.mrCookieSlime.Slimefun.cscorelib2.updater.Updater;
+import me.mrCookieSlime.Slimefun.cscorelib2.updater.GitHubBuildsUpdater;
 import io.github.thebusybiscuit.slimefun4.api.SlimefunAddon;
 import io.github.thebusybiscuit.slimefun4.core.researching.Research;
 import io.github.thebusybiscuit.slimefun4.implementation.SlimefunItems;
@@ -21,19 +24,19 @@ public class MoreTools extends JavaPlugin implements SlimefunAddon {
 
     private static MoreTools instance;
     
-    private Category extraToolsCat;
+    private Category moreToolsCat;
 
     @Override
     public void onEnable() {
         instance = this;
         Config cfg = new Config(this);
 
-        //if (cfg.getBoolean("options.auto-update")) {
-            // TODO: Add auto-update
-        //}
+        if (cfg.getBoolean("options.auto-update")) {
+            Updater updater = new GitHubBuildsUpdater(this, this.getFile(), "LinoxGH/MoreTools/build");
+            updater.start();
+        }
 
-        //int bStatsId = -1;
-        //new Metrics(this, bStatsId);
+        new Metrics(this, 8780);
 
         setupCategories();
         setupItems();
@@ -46,11 +49,11 @@ public class MoreTools extends JavaPlugin implements SlimefunAddon {
     }
     
     private void setupCategories() {
-        extraToolsCat = new Category(new NamespacedKey(this, "more_tools_category"), new CustomItem(Items.CRESCENT_HAMMER, "&3More Tools"), 4);
+        moreToolsCat = new Category(new NamespacedKey(this, "more_tools_category"), new CustomItem(Items.CRESCENT_HAMMER, "&3More Tools", 4));
     }
     
     private void setupItems() {
-        new CrescentHammer(extraToolsCat, Items.CRESCENT_HAMMER, RecipeType.ENHANCED_CRAFTING_TABLE, new ItemStack[] {
+        new CrescentHammer(moreToolsCat, Items.CRESCENT_HAMMER, RecipeType.ENHANCED_CRAFTING_TABLE, new ItemStack[] {
             SlimefunItems.TIN_INGOT, null, SlimefunItems.TIN_INGOT,
             null, SlimefunItems.COPPER_INGOT, null,
             null, SlimefunItems.TIN_INGOT, null
