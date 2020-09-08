@@ -1,22 +1,24 @@
 package io.github.linoxgh.moretools.items;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Effect;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.Rotatable;
 import org.bukkit.entity.Player;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
 
 import io.github.linoxgh.moretools.Messages;
 import io.github.linoxgh.moretools.MoreTools;
+import io.github.linoxgh.moretools.handlers.ItemInteractHandler;
 
 import io.github.thebusybiscuit.slimefun4.core.attributes.DamageableItem;
 import io.github.thebusybiscuit.slimefun4.core.attributes.EnergyNetComponent;
 import io.github.thebusybiscuit.slimefun4.core.handlers.BlockBreakHandler;
-import io.github.thebusybiscuit.slimefun4.core.handlers.ItemUseHandler;
 import io.github.thebusybiscuit.slimefun4.implementation.SlimefunItems;
 import io.github.thebusybiscuit.slimefun4.implementation.SlimefunPlugin;
 import io.github.thebusybiscuit.slimefun4.implementation.items.SimpleSlimefunItem;
@@ -36,10 +38,13 @@ import me.mrCookieSlime.Slimefun.cscorelib2.protection.ProtectableAction;
  * with a single right click.
  *
  * @author Linox
+ *
+ * @see ItemInteractHandler
  * 
  */
-public class CrescentHammer extends SimpleSlimefunItem<ItemUseHandler> implements DamageableItem {
+public class CrescentHammer extends SimpleSlimefunItem<ItemInteractHandler> implements DamageableItem {
 
+    private static final BlockFace[] rotations = {BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST};
     private boolean damageable = true;
 
     public CrescentHammer(Category category, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe) {
@@ -49,35 +54,74 @@ public class CrescentHammer extends SimpleSlimefunItem<ItemUseHandler> implement
     }
     
     @Override
-    public ItemUseHandler getItemHandler() {
+    public ItemInteractHandler getItemHandler() {
         return e -> {
-            Optional<Block> block = e.getClickedBlock();
-            if (block.isPresent()) {
-                Block b = block.get();
+            Block b = e.getClickedBlock();
+            if (b != null) {
                 Player p = e.getPlayer();
-                
                 if (SlimefunPlugin.getProtectionManager().hasPermission(p, b.getLocation(), ProtectableAction.BREAK_BLOCK)) {
                     
-                    SlimefunItem sfItem = BlockStorage.check(b);
-                    if (sfItem != null) {
-                        if (sfItem instanceof EnergyNetComponent || sfItem instanceof EnergyRegulator || sfItem.getID().startsWith("CARGO_NODE") || sfItem instanceof CargoManager || sfItem instanceof ReactorAccessPort || sfItem instanceof TrashCan) {
-                       
-                            BlockBreakEvent event = new BlockBreakEvent(b, p);
-                            Bukkit.getPluginManager().callEvent(event);
-                            if (!event.isCancelled()) {
-                                b.getWorld().playEffect(b.getLocation(), Effect.STEP_SOUND, b.getType());
-                               
-                                if (isDamageable()) {
-                                    damageItem(p, e.getItem());
-                                }
+                    switch(e.getAction()) {
+                        case RIGHT_CLICK_BLOCK:
+                            if (p.isSneaking()) {
+                                //TODO SPECIAL ACTION
+                            } else {
+                                rotateBlock(b, p);
                             }
-                        }
+                            break;
+                        
+                        case LEFT_CLICK_BLOCK:
+                            if (p.isSneaking()) {
+                                //TODO SPECIAL ACTION
+                            } else {
+                                dismantleBlock(b, p, e.getItem());
+                            }
+                            break;
+                        
+                        default:
+                            break;
                     }
-                    p.sendMessage(Messages.CRESCENTHAMMER_RIGHTCLICKFAIL.getMessage());
                 }
             }
             e.cancel();
         };
+    }
+    
+    private void dismantleBlock(Block b, Player p, ItemStack item) {
+        SlimefunItem sfItem = BlockStorage.check(b);
+        if (sfItem != null) {
+            if (sfItem instanceof EnergyNetComponent || sfItem instanceof EnergyRegulator || sfItem.getID().startsWith("CARGO_NODE") || sfItem instanceof CargoManager || sfItem instanceof ReactorAccessPort || sfItem instanceof TrashCan) {
+            
+                BlockBreakEvent event = new BlockBreakEvent(b, p);
+                Bukkit.getPluginManager().callEvent(event);
+                if (!event.isCancelled()) {
+                    b.getWorld().playEffect(b.getLocation(), Effect.STEP_SOUND, b.getType());
+                
+                    if (isDamageable()) {
+                        damageItem(p, item);
+                    }
+                    return;
+                }
+            }
+        }
+        p.sendMessage(Messages.CRESCENTHAMMER_DISMANTLEFAIL.getMessage());
+    }
+    
+    private void rotateBlock(Block b, Player p) {
+    
+        if (b.getBlockData() instanceof Rotatable) {
+            Rotatable rotatable = (Rotatable) b.getBlockData();
+            
+            for (int i = 0; i < rotations.length(); i++) {
+                if (rotatable.getRotation() == rotations[i]) {
+                    i = (i == rotations.length - 1) ? 0 : i + 1;
+                    rotatable.setRotation(rotations[i]);
+                    b.setBlockData(rotatable);
+                    return;
+                }
+            }
+        }
+        p.sendMessage(Messages.CRESCENTHAMMER_ROTATEFAIL.getMessage());
     }
     
     private BlockBreakHandler getBlockBreakHandler() {
