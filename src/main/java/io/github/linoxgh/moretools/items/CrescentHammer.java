@@ -83,7 +83,7 @@ public class CrescentHammer extends SimpleSlimefunItem<ItemInteractHandler> impl
                     }
                 }
             }
-            e.cancel();
+            e.setCancelled(true);
         };
     }
     
@@ -112,7 +112,7 @@ public class CrescentHammer extends SimpleSlimefunItem<ItemInteractHandler> impl
         if (b.getBlockData() instanceof Rotatable) {
             Rotatable rotatable = (Rotatable) b.getBlockData();
             
-            for (int i = 0; i < rotations.length(); i++) {
+            for (int i = 0; i < rotations.length; i++) {
                 if (rotatable.getRotation() == rotations[i]) {
                     i = (i == rotations.length - 1) ? 0 : i + 1;
                     rotatable.setRotation(rotations[i]);
