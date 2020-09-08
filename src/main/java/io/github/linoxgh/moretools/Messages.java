@@ -6,8 +6,8 @@ import me.mrCookieSlime.Slimefun.cscorelib2.config.Config;
 
 public enum Messages {
 
-    ITEMS$CRESCENT_HAMMER$BLOCK_BREAKING,
-    ITEMS$CRESCENT_HAMMER$RIGHT_CLICK_FAIL;
+    ITEMS$CRESCENT_HAMMER$BLOCK_BREAKING(),
+    ITEMS$CRESCENT_HAMMER$RIGHT_CLICK_FAIL();
     
     private final String message;
     
