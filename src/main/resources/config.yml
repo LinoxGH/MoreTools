@@ -9,4 +9,6 @@ messages:
   items:
     crescent-hammer:
       block-breaking: "&cYou cannot break blocks with this!"
-      right-click-fail: "&cYou cannot dismantle this block!"
+      dismantle-fail: "&cYou cannot dismantle this block!"
+      rotate-fail: "&cYou cannot rotate this block!"
+      
