@@ -9,11 +9,10 @@ public enum Messages {
     ITEMS$CRESCENT_HAMMER$BLOCK_BREAKING,
     ITEMS$CRESCENT_HAMMER$RIGHT_CLICK_FAIL;
     
-    private static Config cfg = null;
-    
     private final String message;
     
     Messages() {
+        Config cfg = MoreTools.getInstance().getCfg();
         message = ChatColor.translateAlternateColorCodes('&', cfg.getString("messages" + name().toLowerCase().replace('_', '-').replace('$', '.')));
     }
     
@@ -21,7 +20,4 @@ public enum Messages {
         return message;
     }
     
-    public static void setup(Config cfg) {
-        Messages.cfg = cfg;
-    }
 }
