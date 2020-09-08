@@ -6,7 +6,8 @@ import me.mrCookieSlime.Slimefun.cscorelib2.config.Config;
 public enum Messages {
 
     CRESCENTHAMMER_BLOCKBREAKING("items.crescent-hammer.block-breaking"),
-    CRESCENTHAMMER_RIGHTCLICKFAIL("items.crescent-hammer.right-click-fail");
+    CRESCENTHAMMER_DISMANTLEFAIL("items.crescent-hammer.dismantle-fail"),
+    CRESCENTHAMMER_ROTATEFAIL("items.crescent-hammer.rotate-fail");
     
     private final String message;
     
