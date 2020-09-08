@@ -12,15 +12,14 @@ public enum Messages {
     private final String message;
     
     Messages(@Nonnull String path) {
-        message = ChatColor.color(MoreTools.getInstance().getCfg().getString("messages." + path));
+        message = color(MoreTools.getInstance().getCfg().getString("messages." + path));
+    }
+    
+    private String color(@Nonnull String str) {
+        return ChatColor.translateAlternateColorCodes('&', str);
     }
     
     public String getMessage() {
-        return message;
-    }
-    
-    @Override
-    public String toString() {
         return message;
     }
     
