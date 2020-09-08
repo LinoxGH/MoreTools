@@ -1,6 +1,5 @@
 package io.github.linoxgh.moretools;
 
-import javax.annotation.Nonnull;
 import org.bukkit.ChatColor;
 import me.mrCookieSlime.Slimefun.cscorelib2.config.Config;
 
@@ -11,11 +10,11 @@ public enum Messages {
     
     private final String message;
     
-    Messages(@Nonnull String path) {
+    Messages(String path) {
         message = color(MoreTools.getInstance().getCfg().getString("messages." + path));
     }
     
-    private String color(@Nonnull String str) {
+    private String color(String str) {
         return ChatColor.translateAlternateColorCodes('&', str);
     }
     
