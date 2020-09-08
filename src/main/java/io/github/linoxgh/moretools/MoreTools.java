@@ -6,10 +6,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import io.github.linoxgh.moretools.items.CrescentHammer;
 
-import me.mrCookieSlime.Slimefun.bstats.bukkit.Metrics;
-import me.mrCookieSlime.Slimefun.cscorelib2.item.CustomItem;
-import me.mrCookieSlime.Slimefun.cscorelib2.updater.Updater;
-import me.mrCookieSlime.Slimefun.cscorelib2.updater.GitHubBuildsUpdater;
 import io.github.thebusybiscuit.slimefun4.api.SlimefunAddon;
 import io.github.thebusybiscuit.slimefun4.core.researching.Research;
 import io.github.thebusybiscuit.slimefun4.implementation.SlimefunItems;
@@ -19,17 +15,21 @@ import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.SlimefunItem;
 import me.mrCookieSlime.Slimefun.api.SlimefunItemStack;
 import me.mrCookieSlime.Slimefun.bstats.bukkit.Metrics;
 import me.mrCookieSlime.Slimefun.cscorelib2.config.Config;
+import me.mrCookieSlime.Slimefun.cscorelib2.item.CustomItem;
+import me.mrCookieSlime.Slimefun.cscorelib2.updater.Updater;
+import me.mrCookieSlime.Slimefun.cscorelib2.updater.GitHubBuildsUpdater;
 
 public class MoreTools extends JavaPlugin implements SlimefunAddon {
 
     private static MoreTools instance;
     
+    private Config config;
     private Category moreToolsCat;
 
     @Override
     public void onEnable() {
         instance = this;
-        Config cfg = new Config(this);
+        config = new Config(this);
 
         if (cfg.getBoolean("options.auto-update")) {
             Updater updater = new GitHubBuildsUpdater(this, this.getFile(), "LinoxGH/MoreTools/build");
@@ -37,7 +37,8 @@ public class MoreTools extends JavaPlugin implements SlimefunAddon {
         }
 
         new Metrics(this, 8780);
-
+        
+        Messages.setup();
         setupCategories();
         setupItems();
         setupResearches();
@@ -76,6 +77,10 @@ public class MoreTools extends JavaPlugin implements SlimefunAddon {
         }
         research.register();
     }
+    
+    public Config getCfg() {
+        return config;
+    }
 
     @Override
     public String getBugTrackerURL() {
@@ -90,4 +95,5 @@ public class MoreTools extends JavaPlugin implements SlimefunAddon {
     public static MoreTools getInstance() {
         return instance;
     }
+    
 }
