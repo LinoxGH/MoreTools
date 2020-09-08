@@ -11,6 +11,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
 
 import io.github.linoxgh.moretools.Messages;
+import io.github.linoxgh.moretools.MoreTools;
 
 import io.github.thebusybiscuit.slimefun4.core.attributes.DamageableItem;
 import io.github.thebusybiscuit.slimefun4.core.attributes.EnergyNetComponent;
@@ -72,7 +73,7 @@ public class CrescentHammer extends SimpleSlimefunItem<ItemUseHandler> implement
                             }
                         }
                     }
-                    p.sendMessage(Messages.CRESCENTHAMMER_RIGHTCLICKFAIL);
+                    p.sendMessage(Messages.CRESCENTHAMMER_RIGHTCLICKFAIL.getMessage());
                 }
             }
             e.cancel();
@@ -86,7 +87,7 @@ public class CrescentHammer extends SimpleSlimefunItem<ItemUseHandler> implement
             public boolean onBlockBreak(BlockBreakEvent e, ItemStack item, int fortune, List<ItemStack> drops) {
                 if (isItem(item)) {
                     e.setCancelled(true);
-                    e.getPlayer().sendMessage(Messages.CRESCENTHAMMER_BLOCKBREAKING);
+                    e.getPlayer().sendMessage(Messages.CRESCENTHAMMER_BLOCKBREAKING.getMessage());
                     return true;
                 }
                 return false;
