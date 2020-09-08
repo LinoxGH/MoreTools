@@ -72,7 +72,7 @@ public class CrescentHammer extends SimpleSlimefunItem<ItemUseHandler> implement
                             }
                         }
                     }
-                    p.sendMessage(Messages.ITEMS$CRESCENT_HAMMER$RIGHT_CLICK_FAIL);
+                    p.sendMessage(Messages.CRESCENTHAMMER_RIGHTCLICKFAIL);
                 }
             }
             e.cancel();
@@ -86,7 +86,7 @@ public class CrescentHammer extends SimpleSlimefunItem<ItemUseHandler> implement
             public boolean onBlockBreak(BlockBreakEvent e, ItemStack item, int fortune, List<ItemStack> drops) {
                 if (isItem(item)) {
                     e.setCancelled(true);
-                    e.getPlayer().sendMessage(Messages.ITEMS$CRESCENT_HAMMER$BLOCK_BREAKING);
+                    e.getPlayer().sendMessage(Messages.CRESCENTHAMMER_BLOCKBREAKING);
                     return true;
                 }
                 return false;
