@@ -1,4 +1,4 @@
-package io.github.limoxgh.moretools;
+package io.github.linoxgh.moretools;
 
 import org.bukkit.ChatColor;
 
