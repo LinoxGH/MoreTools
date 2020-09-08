@@ -1,4 +1,4 @@
-package io.github.thebusybiscuit.slimefun4.core.handlers;
+package io.github.linoxgh.moretools.handlers;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEvent;
