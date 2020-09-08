@@ -38,7 +38,6 @@ public class MoreTools extends JavaPlugin implements SlimefunAddon {
 
         new Metrics(this, 8780);
         
-        Messages.setup();
         setupCategories();
         setupItems();
         setupResearches();
