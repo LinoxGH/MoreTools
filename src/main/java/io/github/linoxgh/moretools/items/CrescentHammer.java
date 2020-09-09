@@ -46,11 +46,13 @@ import me.mrCookieSlime.Slimefun.cscorelib2.protection.ProtectableAction;
 public class CrescentHammer extends SimpleSlimefunItem<ItemInteractHandler> implements DamageableItem {
 
     private boolean damageable = true;
+    //private List<String> blacklist = null;
 
     public CrescentHammer(Category category, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe) {
         super(category, item, recipeType, recipe);
         
         damageable = MoreTools.getInstance().getCfg().getBoolean("item-settings.crescent-hammer.damageable");
+        //blacklist = MoreTools.getInstance().getCfg().getStringList("item-settings.crescent-hammer.rotation-blacklist");
     }
     
     @Override
@@ -119,6 +121,14 @@ public class CrescentHammer extends SimpleSlimefunItem<ItemInteractHandler> impl
     }
     
     private void rotateBlock(Block b, Player p) {
+    
+        //if (blacklist != null && !p.hasPermission("moretools.crescent-hammer.rotation-whitelist-bypass")) {
+        //    if (blacklist.contains(b.getType().name())) {
+        //        p.sendMessage(Messages.CRESCENTHAMMER_ROTATEFAIL.getMessage());
+        //        return;
+        //    }
+        //}
+        
         if (b.getBlockData() instanceof Directional) {
             Directional data = (Directional) b.getBlockData();
             BlockFace[] directions = data.getFaces().toArray(new BlockFace[0]);
@@ -127,7 +137,7 @@ public class CrescentHammer extends SimpleSlimefunItem<ItemInteractHandler> impl
                 if (data.getFacing() == directions[i]) {
                     i = (i == directions.length - 1) ? 0 : i + 1;
                     data.setFacing(directions[i]);
-                    b.setBlockData(data);
+                    b.setBlockData(data, true);
                     
                     // Special management for cargo nodes.
                     if (b.getType() == Material.PLAYER_WALL_HEAD) {
