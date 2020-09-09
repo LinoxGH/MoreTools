@@ -126,7 +126,15 @@ public class CrescentHammer extends SimpleSlimefunItem<ItemInteractHandler> impl
                 if (data.getFacing() == directions[i]) {
                     i = (i == directions.length - 1) ? 0 : i + 1;
                     data.setFacing(directions[i]);
-                    b.setBlockData(data);
+                    b.setBlockData(data, true);
+                    
+                    // Special management for cargo nodes.
+                    if (b.getType() == Material.PLAYER_WALL_HEAD) {
+                        SlimefunItem sfItem = BlockStorage.check(b);
+                        if (sfItem != null && sfItem.getID().startsWith("CARGO_NODE")) {
+                            
+                        }
+                    }
                     return;
                 }
             }
