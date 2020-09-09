@@ -5,6 +5,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import io.github.linoxgh.moretools.items.CrescentHammer;
+import io.github.linoxgh.moretools.listeners.PlayerListener;
 
 import io.github.thebusybiscuit.slimefun4.api.SlimefunAddon;
 import io.github.thebusybiscuit.slimefun4.core.researching.Research;
@@ -37,6 +38,8 @@ public class MoreTools extends JavaPlugin implements SlimefunAddon {
         }
 
         new Metrics(this, 8780);
+        
+        new PlayerListener(this);
         
         setupCategories();
         setupItems();
