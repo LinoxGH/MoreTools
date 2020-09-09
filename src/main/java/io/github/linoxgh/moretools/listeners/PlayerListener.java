@@ -2,6 +2,7 @@ package io.github.linoxgh.moretools.listeners;
 
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerInteractEvent;
 
 import io.github.linoxgh.moretools.MoreTools;
 import io.github.linoxgh.moretools.handlers.ItemInteractHandler;
