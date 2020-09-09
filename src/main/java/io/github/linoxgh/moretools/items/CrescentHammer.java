@@ -6,7 +6,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Effect;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.block.data.Rotatable;
+import org.bukkit.block.data.Directional;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -44,7 +44,6 @@ import me.mrCookieSlime.Slimefun.cscorelib2.protection.ProtectableAction;
  */
 public class CrescentHammer extends SimpleSlimefunItem<ItemInteractHandler> implements DamageableItem {
 
-    private static final BlockFace[] rotations = {BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST};
     private boolean damageable = true;
 
     public CrescentHammer(Category category, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe) {
@@ -64,7 +63,7 @@ public class CrescentHammer extends SimpleSlimefunItem<ItemInteractHandler> impl
                     switch(e.getAction()) {
                         case RIGHT_CLICK_BLOCK:
                             if (p.isSneaking()) {
-                                //TODO SPECIAL ACTION
+                                alterChannel(b, p, 1);
                             } else {
                                 rotateBlock(b, p);
                             }
@@ -72,7 +71,7 @@ public class CrescentHammer extends SimpleSlimefunItem<ItemInteractHandler> impl
                         
                         case LEFT_CLICK_BLOCK:
                             if (p.isSneaking()) {
-                                //TODO SPECIAL ACTION
+                                alterChannel(b, p, -1);
                             } else {
                                 dismantleBlock(b, p, e.getItem());
                             }
@@ -85,6 +84,17 @@ public class CrescentHammer extends SimpleSlimefunItem<ItemInteractHandler> impl
             }
             e.setCancelled(true);
         };
+    }
+    
+    private void alterChannel(Block b, Player p, int change) {
+        SlimefunItem sfItem = BlockStorage.check(b);
+        if (sfItem != null) {
+            if (sfItem.getID().startsWith("CARGO_NODE")) {
+            
+                
+            }
+        }
+        p.sendMessage(Messages.CRESCENTHAMMER_CHANNELCHANGEFAIL.getMessage());
     }
     
     private void dismantleBlock(Block b, Player p, ItemStack item) {
@@ -108,15 +118,15 @@ public class CrescentHammer extends SimpleSlimefunItem<ItemInteractHandler> impl
     }
     
     private void rotateBlock(Block b, Player p) {
-    
-        if (b.getBlockData() instanceof Rotatable) {
-            Rotatable rotatable = (Rotatable) b.getBlockData();
+        if (b.getBlockData() instanceof Directional) {
+            Directional data = (Directional) b.getBlockData();
+            BlockFace[] directions = data.getFaces().toArray(new BlockFace[0]);
             
-            for (int i = 0; i < rotations.length; i++) {
-                if (rotatable.getRotation() == rotations[i]) {
-                    i = (i == rotations.length - 1) ? 0 : i + 1;
-                    rotatable.setRotation(rotations[i]);
-                    b.setBlockData(rotatable);
+            for (int i = 0; i < directions.length; i++) {
+                if (data.getFacing() == directions[i]) {
+                    i = (i == directions.length - 1) ? 0 : i + 1;
+                    data.setFacing(directions[i]);
+                    b.setBlockData(data);
                     return;
                 }
             }
