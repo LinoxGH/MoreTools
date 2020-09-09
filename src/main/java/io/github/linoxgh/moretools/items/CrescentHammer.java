@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Effect;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.Directional;
@@ -132,7 +133,7 @@ public class CrescentHammer extends SimpleSlimefunItem<ItemInteractHandler> impl
                     if (b.getType() == Material.PLAYER_WALL_HEAD) {
                         SlimefunItem sfItem = BlockStorage.check(b);
                         if (sfItem != null && sfItem.getID().startsWith("CARGO_NODE")) {
-                            
+                            SlimefunPlugin.getNetworkManager().updateAllNetworks(b.getLocation());
                         }
                     }
                     return;
