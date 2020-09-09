@@ -32,7 +32,7 @@ public class MoreTools extends JavaPlugin implements SlimefunAddon {
         instance = this;
         config = new Config(this);
 
-        if (config.getBoolean("options.auto-update")) {
+        if (config.getBoolean("options.auto-update") && getDescription().getVersion().startsWith("DEV")) {
             Updater updater = new GitHubBuildsUpdater(this, this.getFile(), "LinoxGH/MoreTools/build");
             updater.start();
         }
