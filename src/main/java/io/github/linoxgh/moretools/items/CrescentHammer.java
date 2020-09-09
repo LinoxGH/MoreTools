@@ -45,14 +45,16 @@ import me.mrCookieSlime.Slimefun.cscorelib2.protection.ProtectableAction;
  */
 public class CrescentHammer extends SimpleSlimefunItem<ItemInteractHandler> implements DamageableItem {
 
+    private boolean isChestTerminalInstalled = SlimefunPlugin.getThirdPartySupportService().isChestTerminalInstalled();
+    
     private boolean damageable = true;
-    //private List<String> blacklist = null;
+    private List<String> whitelist = null;
 
     public CrescentHammer(Category category, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe) {
         super(category, item, recipeType, recipe);
         
         damageable = MoreTools.getInstance().getCfg().getBoolean("item-settings.crescent-hammer.damageable");
-        //blacklist = MoreTools.getInstance().getCfg().getStringList("item-settings.crescent-hammer.rotation-blacklist");
+        whitelist = MoreTools.getInstance().getCfg().getStringList("item-settings.crescent-hammer.rotation-whitelist");
     }
     
     @Override
@@ -94,7 +96,28 @@ public class CrescentHammer extends SimpleSlimefunItem<ItemInteractHandler> impl
         if (sfItem != null) {
             if (sfItem.getID().startsWith("CARGO_NODE")) {
             
-                
+                String frequency = BlockStorage.getLocationInfo(b.getLocation(), "frequency");
+                if (frequency != null) {
+                    int current = Integer.parseInt(frequency);
+                    current += change;
+                    
+                    if (current < 0) {
+                        if (isChestTerminalInstalled) {
+                            current = 16;
+                        } else {
+                            current = 15;
+                        }
+                    } else if (isChestTerminalInstalled && current > 16) {
+                        current = 0;
+                    } else if (!isChestTerminalInstalled && current > 15) {
+                        current = 0;
+                    }
+                    
+                    String newFrequency = Integer.toString(current);
+                    BlockStorage.addBlockInfo(b.getLocation(), "frequency", newFrequency);
+                    p.sendMessage(Messages.CRESCENTHAMMER_CHANNELCHANGESUCCESS.getMessage().replace("{channel}", newFrequency));
+                    return;
+                }
             }
         }
         p.sendMessage(Messages.CRESCENTHAMMER_CHANNELCHANGEFAIL.getMessage());
@@ -122,12 +145,12 @@ public class CrescentHammer extends SimpleSlimefunItem<ItemInteractHandler> impl
     
     private void rotateBlock(Block b, Player p) {
     
-        //if (blacklist != null && !p.hasPermission("moretools.crescent-hammer.rotation-whitelist-bypass")) {
-        //    if (blacklist.contains(b.getType().name())) {
-        //        p.sendMessage(Messages.CRESCENTHAMMER_ROTATEFAIL.getMessage());
-        //        return;
-        //    }
-        //}
+        if (whitelist != null && !p.hasPermission("moretools.items.crescent-hammer.rotation-whitelist-bypass")) {
+            if (!whitelist.contains(b.getType().name())) {
+                p.sendMessage(Messages.CRESCENTHAMMER_ROTATEFAIL.getMessage());
+                return;
+            }
+        }
         
         if (b.getBlockData() instanceof Directional) {
             Directional data = (Directional) b.getBlockData();
