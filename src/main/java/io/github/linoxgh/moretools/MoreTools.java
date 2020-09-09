@@ -1,5 +1,7 @@
 package io.github.linoxgh.moretools;
 
+import java.util.logging.Level;
+
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -31,10 +33,26 @@ public class MoreTools extends JavaPlugin implements SlimefunAddon {
     public void onEnable() {
         instance = this;
         config = new Config(this);
+        String version = getDescription().getVersion();
+        
+        if (version.startsWith("DEV")) {
+            String cfgVersion = config.getString("version");
+            if (cfgVersion != null && !cfgVersion.equals(version)) {
+                saveResource("config.yml", true);
+                
+                config = new Config(this);
+                config.setValue("version", version);
+                config.save();
+                
+                getServer().getPluginManager().disablePlugin(this);
+                getLogger().log(Level.SEVERE, "Your config.yml file is outdated, resetting it and then disabling the plugin! Please restart.");
+                return;
+            }
 
-        if (config.getBoolean("options.auto-update") && getDescription().getVersion().startsWith("DEV")) {
-            Updater updater = new GitHubBuildsUpdater(this, this.getFile(), "LinoxGH/MoreTools/build");
-            updater.start();
+            if (config.getBoolean("options.auto-update")) {
+                Updater updater = new GitHubBuildsUpdater(this, this.getFile(), "LinoxGH/MoreTools/build");
+                updater.start();
+            }
         }
 
         new Metrics(this, 8780);
