@@ -6,3 +6,8 @@ website: https://github.com/LinoxGH/MoreTools
 depend: [Slimefun]
 version: ${project.version}
 api-version: 1.14
+
+permissions:
+  moretools.items.crescent-hammer.rotation-whitelist-bypass:
+    description: "Lets the player to bypass block rotation whitelist."
+    default: notop

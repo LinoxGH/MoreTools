@@ -1,9 +1,17 @@
+##### !!!! DO NOT CHANGE THIS VALUE !!!!
+version: 1
+
 options:
   auto-update: true
 
 item-settings:
   crescent-hammer:
     damageable: true
+    # You have got to find the materials to whitelist from:
+    # https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html
+    # Do not enter anything that isn't Directional or anything that's flagged as LEGACY.
+    rotation-whitelist:
+    - PLAYER_WALL_HEAD
 
 messages:
   items:
@@ -11,4 +19,7 @@ messages:
       block-breaking: "&cYou cannot break blocks with this!"
       dismantle-fail: "&cYou cannot dismantle this block!"
       rotate-fail: "&cYou cannot rotate this block!"
+      channel-change-fail: "&cThis is not a cargo node!"
+      channel-change-success: "&aChanged the channel. New channel: {channel}"
+      
       
