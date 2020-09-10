@@ -18,12 +18,12 @@ public class Items {
         List<String> lore = meta.getLore();
         
         if (cfg.getBoolean("item-settings.crescent-hammer.features.enable-rotation")) {
-            lore.set(3, "&eRight Click &7> Rotates the block, if it's rotatable.");
+            lore.add(3, "&eRight Click &7> Rotates the block, if it's rotatable.");
         }
         
         if (cfg.getBoolean("item-settings.crescent-hammer.features.enable-channel-change")) {
-            lore.set(4, "&eShift + Left Click &7> Increases the channel of a cargo node.");
-            lore.set(5, "&eShift + Right Click &7> Decreases the channel of a cargo node.");
+            lore.add(4, "&eShift + Left Click &7> Increases the channel of a cargo node.");
+            lore.add(5, "&eShift + Right Click &7> Decreases the channel of a cargo node.");
         }
         
         meta.setLore(lore);
