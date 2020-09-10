@@ -7,6 +7,10 @@ options:
 item-settings:
   crescent-hammer:
     damageable: true
+    # Changes made in this may cause issues.
+    # When these features are enabled, lores about them are added to the item.
+    # This may cause items crafted in the past to no longer be recognized.
+    # Meaning those items may no longer work.
     features:
       enable-rotation: true
       enable-channel-change: true
@@ -20,6 +24,7 @@ messages:
   items:
     crescent-hammer:
       block-breaking: "&cYou cannot break blocks with this!"
+      cooldown: "&cYou cannot do that now. You need to wait &e{left-cooldown} &cmore seconds!"
       dismantle-fail: "&cYou cannot dismantle this block!"
       rotate-fail: "&cYou cannot rotate this block!"
       channel-change-fail: "&cThis is not a cargo node!"
