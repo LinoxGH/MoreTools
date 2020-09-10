@@ -1,6 +1,8 @@
 package io.github.linoxgh.moretools.items;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Effect;
@@ -49,10 +51,11 @@ public class CrescentHammer extends SimpleSlimefunItem<ItemInteractHandler> impl
     private boolean isChestTerminalInstalled = SlimefunPlugin.getThirdPartySupportService().isChestTerminalInstalled();
     
     private boolean damageable = true;
-    private List<String> whitelist = null;
-    
     private boolean rotationEnabled = true;
     private boolean channelChangeEnabled = true;
+    
+    private List<String> whitelist = null;
+    private HashMap<UUID, Long> lastUses = new HashMap<>();
 
     public CrescentHammer(Category category, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe) {
         super(category, item, recipeType, recipe);
@@ -72,6 +75,15 @@ public class CrescentHammer extends SimpleSlimefunItem<ItemInteractHandler> impl
             if (b != null) {
                 Player p = e.getPlayer();
                 if (SlimefunPlugin.getProtectionManager().hasPermission(p, b.getLocation(), ProtectableAction.BREAK_BLOCK)) {
+                    
+                    Long lastUse = lastUses.get(p.getUniqueId()); 
+                    if (lastUse != null) {
+                        if ((System.currentTimeMillis() - lastUse) > 2000) {
+                            p.sendMessage(Messages.CRESCENTHAMMER_COOLDOWN.getMessage().replace("{left-cooldown}", (2000 - (System.currentTimeMillis() - lastUse)) / 1000));
+                            return;
+                        }
+                    }
+                    laatUses.put(p.getUniqueId(), System.currentTimeMillis());
                     
                     switch(e.getAction()) {
                         case RIGHT_CLICK_BLOCK:
