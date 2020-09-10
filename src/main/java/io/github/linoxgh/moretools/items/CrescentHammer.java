@@ -79,11 +79,11 @@ public class CrescentHammer extends SimpleSlimefunItem<ItemInteractHandler> impl
                     Long lastUse = lastUses.get(p.getUniqueId()); 
                     if (lastUse != null) {
                         if ((System.currentTimeMillis() - lastUse) > 2000) {
-                            p.sendMessage(Messages.CRESCENTHAMMER_COOLDOWN.getMessage().replace("{left-cooldown}", (2000 - (System.currentTimeMillis() - lastUse)) / 1000));
+                            p.sendMessage(Messages.CRESCENTHAMMER_COOLDOWN.getMessage().replaceAll("{left-cooldown}", (2000 - (System.currentTimeMillis() - lastUse)) / 1000));
                             return;
                         }
                     }
-                    laatUses.put(p.getUniqueId(), System.currentTimeMillis());
+                    lastUses.put(p.getUniqueId(), System.currentTimeMillis());
                     
                     switch(e.getAction()) {
                         case RIGHT_CLICK_BLOCK:
