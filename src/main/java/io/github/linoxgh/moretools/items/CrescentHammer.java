@@ -32,6 +32,7 @@ import me.mrCookieSlime.Slimefun.Objects.Category;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.SlimefunItem;
 import me.mrCookieSlime.Slimefun.api.BlockStorage;
 import me.mrCookieSlime.Slimefun.api.SlimefunItemStack;
+import me.mrCookieSlime.Slimefun.cscorelib2.config.Config;
 import me.mrCookieSlime.Slimefun.cscorelib2.protection.ProtectableAction;
 
 /**
@@ -49,12 +50,19 @@ public class CrescentHammer extends SimpleSlimefunItem<ItemInteractHandler> impl
     
     private boolean damageable = true;
     private List<String> whitelist = null;
+    
+    private boolean rotationEnabled = true;
+    private boolean channelChangeEnabled = true;
 
     public CrescentHammer(Category category, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe) {
         super(category, item, recipeType, recipe);
         
-        damageable = MoreTools.getInstance().getCfg().getBoolean("item-settings.crescent-hammer.damageable");
-        whitelist = MoreTools.getInstance().getCfg().getStringList("item-settings.crescent-hammer.rotation-whitelist");
+        Config cfg = MoreTools.getInstance().getCfg();
+        damageable = cfg.getBoolean("item-settings.crescent-hammer.damageable");
+        whitelist = cfg.getStringList("item-settings.crescent-hammer.rotation-whitelist");
+        
+        rotationEnabled = cfg.getBoolean("item-settings.crescent-hammer.features.enable-rotation");
+        channelChangeEnabled = cfg.getBoolean("item-settings.crescent-hammer.features.enable-channel-change");
     }
     
     @Override
@@ -68,7 +76,7 @@ public class CrescentHammer extends SimpleSlimefunItem<ItemInteractHandler> impl
                     switch(e.getAction()) {
                         case RIGHT_CLICK_BLOCK:
                             if (p.isSneaking()) {
-                                alterChannel(b, p, 1);
+                                alterChannel(b, p, -1);
                             } else {
                                 rotateBlock(b, p);
                             }
@@ -76,7 +84,7 @@ public class CrescentHammer extends SimpleSlimefunItem<ItemInteractHandler> impl
                         
                         case LEFT_CLICK_BLOCK:
                             if (p.isSneaking()) {
-                                alterChannel(b, p, -1);
+                                alterChannel(b, p, 1);
                             } else {
                                 dismantleBlock(b, p, e.getItem());
                             }
@@ -92,6 +100,11 @@ public class CrescentHammer extends SimpleSlimefunItem<ItemInteractHandler> impl
     }
     
     private void alterChannel(Block b, Player p, int change) {
+    
+        if (!channelChangeEnabled) {
+            return;
+        }
+        
         SlimefunItem sfItem = BlockStorage.check(b);
         if (sfItem != null) {
             if (sfItem.getID().startsWith("CARGO_NODE")) {
@@ -145,6 +158,10 @@ public class CrescentHammer extends SimpleSlimefunItem<ItemInteractHandler> impl
     
     private void rotateBlock(Block b, Player p) {
     
+        if (!rotationEnabled) {
+            return;
+        }
+        
         if (whitelist != null && !p.hasPermission("moretools.items.crescent-hammer.rotation-whitelist-bypass")) {
             if (!whitelist.contains(b.getType().name())) {
                 p.sendMessage(Messages.CRESCENTHAMMER_ROTATEFAIL.getMessage());
