@@ -54,6 +54,7 @@ public class CrescentHammer extends SimpleSlimefunItem<ItemInteractHandler> impl
     private final boolean isChestTerminalInstalled = SlimefunPlugin.getThirdPartySupportService().isChestTerminalInstalled();
     private final HashMap<String, Integer> slotCurrents = new HashMap<>();
 
+    private final int cooldown;
     private final boolean damageable;
     private final boolean rotationEnabled;
     private final boolean channelChangeEnabled;
@@ -65,6 +66,7 @@ public class CrescentHammer extends SimpleSlimefunItem<ItemInteractHandler> impl
         super(category, item, recipeType, recipe);
         
         Config cfg = MoreTools.getInstance().getCfg();
+        cooldown = cfg.getInt("item-settings.crescent-hammer.cooldown");
         damageable = cfg.getBoolean("item-settings.crescent-hammer.damageable");
         whitelist = cfg.getStringList("item-settings.crescent-hammer.rotation-whitelist");
         
@@ -86,8 +88,8 @@ public class CrescentHammer extends SimpleSlimefunItem<ItemInteractHandler> impl
                     
                     Long lastUse = lastUses.get(p.getUniqueId()); 
                     if (lastUse != null) {
-                        if ((System.currentTimeMillis() - lastUse) < 2000) {
-                            p.sendMessage(Messages.CRESCENTHAMMER_COOLDOWN.getMessage().replace("{left-cooldown}", String.valueOf((2000 - (System.currentTimeMillis() - lastUse)) / 1000)));
+                        if ((System.currentTimeMillis() - lastUse) < cooldown) {
+                            p.sendMessage(Messages.CRESCENTHAMMER_COOLDOWN.getMessage().replace("{left-cooldown}", String.valueOf((cooldown - (System.currentTimeMillis() - lastUse)) / 1000)));
                             return;
                         }
                     }
@@ -145,9 +147,8 @@ public class CrescentHammer extends SimpleSlimefunItem<ItemInteractHandler> impl
                     } else if (!isChestTerminalInstalled && current > 15) {
                         current = 0;
                     }
-                    
-                    String newFrequency = Integer.toString(current);
-                    BlockStorage.addBlockInfo(b.getLocation(), "frequency", newFrequency);
+
+                    BlockStorage.addBlockInfo(b.getLocation(), "frequency", Integer.toString(current));
 
                     BlockMenu menu = BlockStorage.getInventory(b);
                     int slotCurrent = slotCurrents.get(sfItem.getID());
@@ -158,8 +159,8 @@ public class CrescentHammer extends SimpleSlimefunItem<ItemInteractHandler> impl
                         menu.replaceExistingItem(slotCurrent, new CustomItem(MaterialCollections.getAllWoolColors().get(current), "&bChannel ID: &3" + (current + 1)));
                     }
                     menu.addMenuClickHandler(slotCurrent, ChestMenuUtils.getEmptyClickHandler());
-
-                    p.sendMessage(Messages.CRESCENTHAMMER_CHANNELCHANGESUCCESS.getMessage().replace("{channel}", newFrequency));
+                    
+                    p.sendMessage(Messages.CRESCENTHAMMER_CHANNELCHANGESUCCESS.getMessage().replace("{channel}", Integer.toString(current + 1)));
                     return;
                 }
             }

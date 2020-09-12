@@ -6,6 +6,10 @@ options:
 
 item-settings:
   crescent-hammer:
+    # This is the cooldown length you need to wait to use the crescent hammer again.
+    # This value must be in milliseconds.
+    # Do not set this to negative OR to zero. This will cause dupe bugs to occur.
+    cooldown: 500
     damageable: true
     # Changes made in this may cause issues.
     # When these features are enabled, lores about them are added to the item.
