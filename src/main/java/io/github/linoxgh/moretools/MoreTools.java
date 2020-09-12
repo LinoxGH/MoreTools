@@ -1,10 +1,13 @@
 package io.github.linoxgh.moretools;
 
+import java.util.logging.Level;
+
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import io.github.linoxgh.moretools.items.CrescentHammer;
+import io.github.linoxgh.moretools.listeners.PlayerListener;
 
 import io.github.thebusybiscuit.slimefun4.api.SlimefunAddon;
 import io.github.thebusybiscuit.slimefun4.core.researching.Research;
@@ -12,7 +15,6 @@ import io.github.thebusybiscuit.slimefun4.implementation.SlimefunItems;
 import me.mrCookieSlime.Slimefun.Lists.RecipeType;
 import me.mrCookieSlime.Slimefun.Objects.Category;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.SlimefunItem;
-import me.mrCookieSlime.Slimefun.api.SlimefunItemStack;
 import me.mrCookieSlime.Slimefun.bstats.bukkit.Metrics;
 import me.mrCookieSlime.Slimefun.cscorelib2.config.Config;
 import me.mrCookieSlime.Slimefun.cscorelib2.item.CustomItem;
@@ -30,13 +32,31 @@ public class MoreTools extends JavaPlugin implements SlimefunAddon {
     public void onEnable() {
         instance = this;
         config = new Config(this);
+        String version = getDescription().getVersion();
+        
+        if (version.startsWith("DEV")) {
+            String cfgVersion = config.getString("version");
+            if (cfgVersion != null && !cfgVersion.equals(version)) {
+                saveResource("config.yml", true);
+                
+                config = new Config(this);
+                config.setValue("version", version);
+                config.save();
+                
+                getServer().getPluginManager().disablePlugin(this);
+                getLogger().log(Level.SEVERE, "Your config.yml file is outdated, resetting it and then disabling the plugin! Please restart.");
+                return;
+            }
 
-        if (config.getBoolean("options.auto-update")) {
-            Updater updater = new GitHubBuildsUpdater(this, this.getFile(), "LinoxGH/MoreTools/build");
-            updater.start();
+            if (config.getBoolean("options.auto-update")) {
+                Updater updater = new GitHubBuildsUpdater(this, this.getFile(), "LinoxGH/MoreTools/build");
+                updater.start();
+            }
         }
 
         new Metrics(this, 8780);
+        
+        new PlayerListener(this);
         
         setupCategories();
         setupItems();
