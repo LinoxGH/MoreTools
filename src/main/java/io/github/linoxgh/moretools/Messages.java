@@ -10,19 +10,19 @@ public enum Messages {
     CRESCENTHAMMER_ROTATEFAIL("items.crescent-hammer.rotate-fail"),
     CRESCENTHAMMER_CHANNELCHANGEFAIL("items.crescent-hammer.channel-change-fail"),
     CRESCENTHAMMER_CHANNELCHANGESUCCESS("items.crescent-hammer.channel-change-success");
-    
+
     private final String message;
-    
+
     Messages(String path) {
         message = color(MoreTools.getInstance().getCfg().getString("messages." + path));
     }
-    
+
     private String color(String str) {
         return ChatColor.translateAlternateColorCodes('&', str);
     }
-    
+
     public String getMessage() {
         return message;
     }
-    
+
 }
