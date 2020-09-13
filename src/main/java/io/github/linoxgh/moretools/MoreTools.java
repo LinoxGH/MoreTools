@@ -42,8 +42,8 @@ public class MoreTools extends JavaPlugin implements SlimefunAddon {
                 config.save();
 
                 getServer().getPluginManager().disablePlugin(this);
-                getLogger().log(Level.SEVERE, "Your config.yml file is outdated, resetting it and then disabling the " +
-                    "plugin! Please restart.");
+                getLogger().log(Level.SEVERE, "Your config.yml file is outdated, " +
+                    "resetting it and then disabling the plugin! Please restart.");
                 return;
             }
 
