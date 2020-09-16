@@ -3,6 +3,7 @@ package io.github.linoxgh.moretools;
 import java.util.logging.Level;
 
 import org.bukkit.NamespacedKey;
+import org.bukkit.configuration.Configuration;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -15,6 +16,7 @@ import io.github.thebusybiscuit.slimefun4.implementation.SlimefunItems;
 import me.mrCookieSlime.Slimefun.Lists.RecipeType;
 import me.mrCookieSlime.Slimefun.Objects.Category;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.SlimefunItem;
+import me.mrCookieSlime.Slimefun.api.SlimefunItemStack;
 import me.mrCookieSlime.Slimefun.bstats.bukkit.Metrics;
 import me.mrCookieSlime.Slimefun.cscorelib2.config.Config;
 import me.mrCookieSlime.Slimefun.cscorelib2.item.CustomItem;
@@ -26,7 +28,7 @@ public class MoreTools extends JavaPlugin implements SlimefunAddon {
     private static MoreTools instance;
     
     private Config config;
-    private Category moreToolsCat;
+    private Category moreToolsCategory;
 
     @Override
     public void onEnable() {
@@ -36,18 +38,19 @@ public class MoreTools extends JavaPlugin implements SlimefunAddon {
         
         if (version.startsWith("DEV")) {
             String cfgVersion = config.getString("version");
-            if (cfgVersion != null && !cfgVersion.equals(version)) {
-                saveResource("config.yml", true);
+            
+            Configuration defaultCfg = getConfig().getDefaults();
+            if (cfgVersion == null || !cfgVersion.equals(version)) {
+                for (String key : defaultCfg.getKeys()) {
+                    if (!config.contains(key, true)) {
+                        config.set(key, defaultCfg.get(key));
+                    }
+                }
                 
-                config = new Config(this);
-                config.setValue("version", version);
+                config.set("version", version);
                 config.save();
-                
-                getServer().getPluginManager().disablePlugin(this);
-                getLogger().log(Level.SEVERE, "Your config.yml file is outdated, resetting it and then disabling the plugin! Please restart.");
-                return;
             }
-
+            
             if (config.getBoolean("options.auto-update")) {
                 Updater updater = new GitHubBuildsUpdater(this, this.getFile(), "LinoxGH/MoreTools/build");
                 updater.start();
@@ -69,11 +72,11 @@ public class MoreTools extends JavaPlugin implements SlimefunAddon {
     }
     
     private void setupCategories() {
-        moreToolsCat = new Category(new NamespacedKey(this, "more_tools_category"), new CustomItem(Items.CRESCENT_HAMMER, "&3More Tools"), 4);
+        moreToolsCategory = new Category(new NamespacedKey(this, "more_tools_category"), new CustomItem(Items.CRESCENT_HAMMER, "&3More Tools"), 4);
     }
     
     private void setupItems() {
-        new CrescentHammer(moreToolsCat, Items.CRESCENT_HAMMER, RecipeType.ENHANCED_CRAFTING_TABLE, new ItemStack[] {
+        new CrescentHammer(moreToolsCategory, Items.CRESCENT_HAMMER, RecipeType.ENHANCED_CRAFTING_TABLE, new ItemStack[] {
             SlimefunItems.TIN_INGOT, null, SlimefunItems.TIN_INGOT,
             null, SlimefunItems.COPPER_INGOT, null,
             null, SlimefunItems.TIN_INGOT, null
