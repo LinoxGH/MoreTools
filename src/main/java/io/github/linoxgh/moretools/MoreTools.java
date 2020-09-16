@@ -61,7 +61,7 @@ public class MoreTools extends JavaPlugin implements SlimefunAddon {
                 try {
                     cfg.save("config.yml");
                 } catch (IOException e) {
-                    getLogger(Level.SEVERE, "Failed saving config.yml file.", e);
+                    getLogger().log(Level.SEVERE, "Failed saving config.yml file.", e);
                     getServer().getPluginManager().disablePlugin(this);
                     return;
                 }
