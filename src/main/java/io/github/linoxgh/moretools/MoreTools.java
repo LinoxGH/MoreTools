@@ -37,7 +37,7 @@ public class MoreTools extends JavaPlugin implements SlimefunAddon {
         
         saveDefaultConfig();
         FileConfiguration cfg = getConfig();
-        debug = cfg.getBoolean("debug", true);
+        debug = cfg.getBoolean("options.debugging", true);
         
         String version = getDescription().getVersion();
         if (version.startsWith("DEV")) {
