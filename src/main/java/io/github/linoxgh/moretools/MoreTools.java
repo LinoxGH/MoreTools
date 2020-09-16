@@ -1,5 +1,6 @@
 package io.github.linoxgh.moretools;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
 
@@ -27,6 +28,8 @@ import me.mrCookieSlime.Slimefun.cscorelib2.updater.GitHubBuildsUpdater;
 public class MoreTools extends JavaPlugin implements SlimefunAddon {
 
     private static MoreTools instance;
+    
+    private final File configFile = new File(getDataFolder().getAbsolutePath + File.pathSeparator + "config.yml");
     
     private Category moreToolsCategory;
     private boolean debug = true;
@@ -59,7 +62,8 @@ public class MoreTools extends JavaPlugin implements SlimefunAddon {
                 getLogger().log(Level.INFO, "Finished updating config.yml file. Now saving...");
                 
                 try {
-                    cfg.save("config.yml");
+                    cfg.save(configFile);
+                    getLogger().log(Level.INFO, "Saved config.yml file.");
                 } catch (IOException e) {
                     getLogger().log(Level.SEVERE, "Failed saving config.yml file.", e);
                     getServer().getPluginManager().disablePlugin(this);
