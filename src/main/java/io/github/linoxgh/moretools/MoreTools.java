@@ -4,6 +4,7 @@ import java.util.logging.Level;
 
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.Configuration;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -18,7 +19,6 @@ import me.mrCookieSlime.Slimefun.Objects.Category;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.SlimefunItem;
 import me.mrCookieSlime.Slimefun.api.SlimefunItemStack;
 import me.mrCookieSlime.Slimefun.bstats.bukkit.Metrics;
-import me.mrCookieSlime.Slimefun.cscorelib2.config.Config;
 import me.mrCookieSlime.Slimefun.cscorelib2.item.CustomItem;
 import me.mrCookieSlime.Slimefun.cscorelib2.updater.Updater;
 import me.mrCookieSlime.Slimefun.cscorelib2.updater.GitHubBuildsUpdater;
@@ -27,31 +27,32 @@ public class MoreTools extends JavaPlugin implements SlimefunAddon {
 
     private static MoreTools instance;
     
-    private Config config;
     private Category moreToolsCategory;
 
     @Override
     public void onEnable() {
         instance = this;
-        config = new Config(this);
-        String version = getDescription().getVersion();
         
+        saveDefaultConfig();
+        FileConfiguration cfg = getConfig();
+        
+        String version = getDescription().getVersion();
         if (version.startsWith("DEV")) {
-            String cfgVersion = config.getString("version");
+            String cfgVersion = cfg.getString("version");
             
             Configuration defaultCfg = getConfig().getDefaults();
             if (cfgVersion == null || !cfgVersion.equals(version)) {
-                for (String key : defaultCfg.getKeys()) {
-                    if (!config.contains(key, true)) {
-                        config.set(key, defaultCfg.get(key));
+                for (String key : defaultCfg.getKeys(true)) {
+                    if (!cfg.contains(key, true)) {
+                        cfg.set(key, defaultCfg.get(key));
                     }
                 }
                 
-                config.set("version", version);
-                config.save();
+                cfg.set("version", version);
+                cfg.save();
             }
             
-            if (config.getBoolean("options.auto-update")) {
+            if (cfg.getBoolean("options.auto-update")) {
                 Updater updater = new GitHubBuildsUpdater(this, this.getFile(), "LinoxGH/MoreTools/build");
                 updater.start();
             }
@@ -98,10 +99,6 @@ public class MoreTools extends JavaPlugin implements SlimefunAddon {
             }
         }
         research.register();
-    }
-    
-    public Config getCfg() {
-        return config;
     }
 
     @Override
