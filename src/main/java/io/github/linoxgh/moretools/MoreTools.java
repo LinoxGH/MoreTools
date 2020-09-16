@@ -1,5 +1,6 @@
 package io.github.linoxgh.moretools;
 
+import java.io.IOException;
 import java.util.logging.Level;
 
 import org.bukkit.NamespacedKey;
@@ -28,6 +29,7 @@ public class MoreTools extends JavaPlugin implements SlimefunAddon {
     private static MoreTools instance;
     
     private Category moreToolsCategory;
+    private boolean debug = true;
 
     @Override
     public void onEnable() {
@@ -35,6 +37,7 @@ public class MoreTools extends JavaPlugin implements SlimefunAddon {
         
         saveDefaultConfig();
         FileConfiguration cfg = getConfig();
+        debug = cfg.getBoolean("debug", true);
         
         String version = getDescription().getVersion();
         if (version.startsWith("DEV")) {
@@ -42,14 +45,26 @@ public class MoreTools extends JavaPlugin implements SlimefunAddon {
             
             Configuration defaultCfg = getConfig().getDefaults();
             if (cfgVersion == null || !cfgVersion.equals(version)) {
+            
+                getLogger().log(Level.WARNING, "Your config.yml file is outdated. Updating...");
+                
                 for (String key : defaultCfg.getKeys(true)) {
                     if (!cfg.contains(key, true)) {
+                        if (debug) getLogger().log(Level.INFO, "Setting \"" + key + "\" to \"" + defaultCfg.get(key) + "\".");
                         cfg.set(key, defaultCfg.get(key));
                     }
                 }
-                
                 cfg.set("version", version);
-                cfg.save("config.yml");
+                
+                getLogger().log(Level.INFO, "Finished updating config.yml file. Now saving...");
+                
+                try {
+                    cfg.save("config.yml");
+                } catch (IOException e) {
+                    getLogger(Level.SEVERE, "Failed saving config.yml file.", e);
+                    getServer().getPluginManager().disablePlugin(this);
+                    return;
+                }
             }
             
             if (cfg.getBoolean("options.auto-update")) {
@@ -58,8 +73,10 @@ public class MoreTools extends JavaPlugin implements SlimefunAddon {
             }
         }
 
+        if (debug) getLogger().log(Level.INFO, "Setting up event metrics...");
         new Metrics(this, 8780);
         
+        if (debug) getLogger().log(Level.INFO, "Setting up event listeners...");
         new PlayerListener(this);
         
         setupCategories();
@@ -73,10 +90,14 @@ public class MoreTools extends JavaPlugin implements SlimefunAddon {
     }
     
     private void setupCategories() {
+        if (debug) getLogger().log(Level.INFO, "Setting up categories...");
+        
         moreToolsCategory = new Category(new NamespacedKey(this, "more_tools_category"), new CustomItem(Items.CRESCENT_HAMMER, "&3More Tools"), 4);
     }
     
     private void setupItems() {
+        if (debug) getLogger().log(Level.INFO, "Setting up items...");
+        
         new CrescentHammer(moreToolsCategory, Items.CRESCENT_HAMMER, RecipeType.ENHANCED_CRAFTING_TABLE, new ItemStack[] {
             SlimefunItems.TIN_INGOT, null, SlimefunItems.TIN_INGOT,
             null, SlimefunItems.COPPER_INGOT, null,
@@ -86,6 +107,8 @@ public class MoreTools extends JavaPlugin implements SlimefunAddon {
     }
     
     private void setupResearches() {
+        if (debug) getLogger().log(Level.INFO, "Setting up researches...");
+        
         registerResearch("crescent_hammer", 7501, "Not A Hammer", 15, Items.CRESCENT_HAMMER);
     }
     
@@ -113,6 +136,10 @@ public class MoreTools extends JavaPlugin implements SlimefunAddon {
     
     public static MoreTools getInstance() {
         return instance;
+    }
+    
+    public boolean debug() {
+        return debug;
     }
     
 }
