@@ -49,7 +49,7 @@ public class MoreTools extends JavaPlugin implements SlimefunAddon {
                 }
                 
                 cfg.set("version", version);
-                cfg.save();
+                cfg.save("config.yml");
             }
             
             if (cfg.getBoolean("options.auto-update")) {
