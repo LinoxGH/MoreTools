@@ -10,6 +10,7 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.Directional;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -34,7 +35,6 @@ import me.mrCookieSlime.Slimefun.Objects.Category;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.SlimefunItem;
 import me.mrCookieSlime.Slimefun.api.BlockStorage;
 import me.mrCookieSlime.Slimefun.api.SlimefunItemStack;
-import me.mrCookieSlime.Slimefun.cscorelib2.config.Config;
 import me.mrCookieSlime.Slimefun.cscorelib2.protection.ProtectableAction;
 
 /**
@@ -61,7 +61,8 @@ public class CrescentHammer extends SimpleSlimefunItem<ItemInteractHandler> impl
     public CrescentHammer(Category category, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe) {
         super(category, item, recipeType, recipe);
         
-        Config cfg = MoreTools.getInstance().getCfg();
+        FileConfiguration cfg = MoreTools.getInstance().getConfig();
+        
         damageable = cfg.getBoolean("item-settings.crescent-hammer.damageable");
         whitelist = cfg.getStringList("item-settings.crescent-hammer.rotation-whitelist");
         
