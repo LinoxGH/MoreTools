@@ -29,7 +29,7 @@ public class MoreTools extends JavaPlugin implements SlimefunAddon {
 
     private static MoreTools instance;
     
-    private final File configFile = new File(getDataFolder().getAbsolutePath() + File.pathSeparator + "config.yml");
+    private final File configFile = new File(getDataFolder().getAbsolutePath() + File.separator + "config.yml");
     
     private Category moreToolsCategory;
     private boolean debug = true;
@@ -71,10 +71,10 @@ public class MoreTools extends JavaPlugin implements SlimefunAddon {
                 }
             }
             
-            //if (cfg.getBoolean("options.auto-update")) {
-            //    Updater updater = new GitHubBuildsUpdater(this, this.getFile(), "LinoxGH/MoreTools/build");
-            //    updater.start();
-            //}
+            if (cfg.getBoolean("options.auto-update")) {
+                Updater updater = new GitHubBuildsUpdater(this, this.getFile(), "LinoxGH/MoreTools/build");
+                updater.start();
+            }
         }
 
         if (debug) getLogger().log(Level.INFO, "Setting up event metrics...");
