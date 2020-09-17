@@ -71,10 +71,10 @@ public class MoreTools extends JavaPlugin implements SlimefunAddon {
                 }
             }
             
-            //if (cfg.getBoolean("options.auto-update")) {
-            //    Updater updater = new GitHubBuildsUpdater(this, this.getFile(), "LinoxGH/MoreTools/build");
-            //    updater.start();
-            //}
+            if (cfg.getBoolean("options.auto-update")) {
+                Updater updater = new GitHubBuildsUpdater(this, this.getFile(), "LinoxGH/MoreTools/build");
+                updater.start();
+            }
         }
 
         if (debug) getLogger().log(Level.INFO, "Setting up event metrics...");
@@ -91,10 +91,6 @@ public class MoreTools extends JavaPlugin implements SlimefunAddon {
     @Override
     public void onDisable() {
         instance = null;
-    }
-    
-    private void updateConfig() {
-        
     }
     
     private void setupCategories() {
