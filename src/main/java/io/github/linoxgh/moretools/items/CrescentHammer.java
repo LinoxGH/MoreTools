@@ -30,11 +30,16 @@ import io.github.thebusybiscuit.slimefun4.implementation.items.cargo.CargoManage
 import io.github.thebusybiscuit.slimefun4.implementation.items.cargo.ReactorAccessPort;
 import io.github.thebusybiscuit.slimefun4.implementation.items.cargo.TrashCan;
 import io.github.thebusybiscuit.slimefun4.implementation.items.electric.EnergyRegulator;
+import io.github.thebusybiscuit.slimefun4.utils.ChestMenuUtils;
+import io.github.thebusybiscuit.slimefun4.utils.HeadTexture;
 import me.mrCookieSlime.Slimefun.Lists.RecipeType;
 import me.mrCookieSlime.Slimefun.Objects.Category;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.SlimefunItem;
 import me.mrCookieSlime.Slimefun.api.BlockStorage;
 import me.mrCookieSlime.Slimefun.api.SlimefunItemStack;
+import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
+import me.mrCookieSlime.Slimefun.cscorelib2.item.CustomItem;
+import me.mrCookieSlime.Slimefun.cscorelib2.materials.MaterialCollections;
 import me.mrCookieSlime.Slimefun.cscorelib2.protection.ProtectableAction;
 
 /**
@@ -49,14 +54,17 @@ import me.mrCookieSlime.Slimefun.cscorelib2.protection.ProtectableAction;
  */
 public class CrescentHammer extends SimpleSlimefunItem<ItemInteractHandler> implements DamageableItem {
 
-    private boolean isChestTerminalInstalled = SlimefunPlugin.getThirdPartySupportService().isChestTerminalInstalled();
+    private final boolean isChestTerminalInstalled = SlimefunPlugin.getThirdPartySupportService().isChestTerminalInstalled();
     
-    private boolean damageable = true;
-    private boolean rotationEnabled = true;
-    private boolean channelChangeEnabled = true;
+    private final boolean damageable;
+    private final boolean rotationEnabled;
+    private final boolean channelChangeEnabled;
     
-    private List<String> whitelist = null;
-    private HashMap<UUID, Long> lastUses = new HashMap<>();
+    private final int cooldown;
+    private final List<String> whitelist;
+    
+    private final HashMap<UUID, Long> lastUses = new HashMap<>();
+    private final HashMap<String, Integer> slotCurrents = new HashMap<>();
 
     public CrescentHammer(Category category, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe) {
         super(category, item, recipeType, recipe);
@@ -64,10 +72,15 @@ public class CrescentHammer extends SimpleSlimefunItem<ItemInteractHandler> impl
         FileConfiguration cfg = MoreTools.getInstance().getConfig();
         
         damageable = cfg.getBoolean("item-settings.crescent-hammer.damageable");
-        whitelist = cfg.getStringList("item-settings.crescent-hammer.rotation-whitelist");
-        
         rotationEnabled = cfg.getBoolean("item-settings.crescent-hammer.features.enable-rotation");
         channelChangeEnabled = cfg.getBoolean("item-settings.crescent-hammer.features.enable-channel-change");
+        
+        cooldown = cfg.getInteger("item-settings.crescent-hammer.cooldown");
+        whitelist = cfg.getStringList("item-settings.crescent-hammer.rotation-whitelist");
+        
+        slotCurrents.put("CARGO_NODE_INPUT", 42);
+        slotCurrents.put("CARGO_NODE_OUTPUT", 13);
+        slotCurrents.put("CARGO_NODE_OUTPUT_ADVANCED", 42);
     }
     
     @Override
@@ -80,11 +93,11 @@ public class CrescentHammer extends SimpleSlimefunItem<ItemInteractHandler> impl
                     
                     Long lastUse = lastUses.get(p.getUniqueId()); 
                     if (lastUse != null) {
-                        if ((System.currentTimeMillis() - lastUse) > 2000) {
+                        if ((System.currentTimeMillis() - lastUse) < cooldown) {
                             p.sendMessage(
                                 Messages.CRESCENTHAMMER_COOLDOWN.getMessage().replaceAll(
                                     "{left-cooldown}", 
-                                    String.valueOf((2000 - (System.currentTimeMillis() - lastUse)) / 1000))
+                                    String.valueOf(cooldown - (System.currentTimeMillis() - lastUse)))
                                 );
                             return;
                         }
@@ -125,7 +138,7 @@ public class CrescentHammer extends SimpleSlimefunItem<ItemInteractHandler> impl
         
         SlimefunItem sfItem = BlockStorage.check(b);
         if (sfItem != null) {
-            if (sfItem.getID().startsWith("CARGO_NODE")) {
+            if (sfItem.getID().startsWith("CARGO_NODE_")) {
             
                 String frequency = BlockStorage.getLocationInfo(b.getLocation(), "frequency");
                 if (frequency != null) {
@@ -133,20 +146,31 @@ public class CrescentHammer extends SimpleSlimefunItem<ItemInteractHandler> impl
                     current += change;
                     
                     if (current < 0) {
-                        if (isChestTerminalInstalled) {
-                            current = 16;
-                        } else {
-                            current = 15;
-                        }
+                        current = isChestTerminalInstalled ? 16 : 15;
                     } else if (isChestTerminalInstalled && current > 16) {
                         current = 0;
                     } else if (!isChestTerminalInstalled && current > 15) {
                         current = 0;
                     }
                     
-                    String newFrequency = Integer.toString(current);
-                    BlockStorage.addBlockInfo(b.getLocation(), "frequency", newFrequency);
-                    p.sendMessage(Messages.CRESCENTHAMMER_CHANNELCHANGESUCCESS.getMessage().replace("{channel}", newFrequency));
+                    BlockMenu menu = BlockStorage.getInventory(b);
+                    int slotCurrent = slotCurrents.get(sfItem.getID());
+                    
+                    if (current == 16) { 
+                        menu.replaceExistingItem(
+                            slotCurrent, 
+                            new CustomItem(HeadTexture.CHEST_TERMINAL.getAsItemStack(), "&bChannel ID: &3" + (current + 1))
+                        );
+                    } else { 
+                        menu.replaceExistingItem(
+                            slotCurrent, 
+                            new CustomItem(MaterialCollections.getAllWoolColors().get(current), "&bChannel ID: &3" + (current + 1))
+                        );
+                    }
+                    menu.addMenuClickHandler(slotCurrent, ChestMenuUtils.getEmptyClickHandler());
+                    
+                    BlockStorage.addBlockInfo(b.getLocation(), "frequency", Integer.toString(current));
+                    p.sendMessage(Messages.CRESCENTHAMMER_CHANNELCHANGESUCCESS.getMessage().replace("{channel}", Integer.toString(current + 1)));
                     return;
                 }
             }
