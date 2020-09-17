@@ -29,7 +29,7 @@ public class MoreTools extends JavaPlugin implements SlimefunAddon {
 
     private static MoreTools instance;
     
-    private final File configFile = new File(getDataFolder().getAbsolutePath + File.pathSeparator + "config.yml");
+    private final File configFile = new File(getDataFolder().getAbsolutePath() + File.pathSeparator + "config.yml");
     
     private Category moreToolsCategory;
     private boolean debug = true;
