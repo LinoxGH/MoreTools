@@ -2,8 +2,6 @@ package io.github.linoxgh.moretools;
 
 import org.bukkit.ChatColor;
 
-import me.mrCookieSlime.Slimefun.cscorelib2.config.Config;
-
 public enum Messages {
 
     CRESCENTHAMMER_BLOCKBREAKING("items.crescent-hammer.block-breaking"),
