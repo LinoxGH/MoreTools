@@ -4,18 +4,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
-import io.github.thebusybiscuit.slimefun4.utils.ChestMenuUtils;
-import io.github.thebusybiscuit.slimefun4.utils.HeadTexture;
-import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
-import me.mrCookieSlime.Slimefun.cscorelib2.item.CustomItem;
-import me.mrCookieSlime.Slimefun.cscorelib2.materials.MaterialCollections;
 import org.bukkit.Bukkit;
 import org.bukkit.Effect;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.Directional;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
 
@@ -26,23 +23,29 @@ import io.github.linoxgh.moretools.handlers.ItemInteractHandler;
 import io.github.thebusybiscuit.slimefun4.core.attributes.DamageableItem;
 import io.github.thebusybiscuit.slimefun4.core.attributes.EnergyNetComponent;
 import io.github.thebusybiscuit.slimefun4.core.handlers.BlockBreakHandler;
+import io.github.thebusybiscuit.slimefun4.implementation.SlimefunItems;
 import io.github.thebusybiscuit.slimefun4.implementation.SlimefunPlugin;
 import io.github.thebusybiscuit.slimefun4.implementation.items.SimpleSlimefunItem;
 import io.github.thebusybiscuit.slimefun4.implementation.items.cargo.CargoManager;
 import io.github.thebusybiscuit.slimefun4.implementation.items.cargo.ReactorAccessPort;
 import io.github.thebusybiscuit.slimefun4.implementation.items.cargo.TrashCan;
 import io.github.thebusybiscuit.slimefun4.implementation.items.electric.EnergyRegulator;
+import io.github.thebusybiscuit.slimefun4.utils.ChestMenuUtils;
+import io.github.thebusybiscuit.slimefun4.utils.HeadTexture;
 import me.mrCookieSlime.Slimefun.Lists.RecipeType;
 import me.mrCookieSlime.Slimefun.Objects.Category;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.SlimefunItem;
 import me.mrCookieSlime.Slimefun.api.BlockStorage;
 import me.mrCookieSlime.Slimefun.api.SlimefunItemStack;
-import me.mrCookieSlime.Slimefun.cscorelib2.config.Config;
+import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
+import me.mrCookieSlime.Slimefun.cscorelib2.item.CustomItem;
+import me.mrCookieSlime.Slimefun.cscorelib2.materials.MaterialCollections;
 import me.mrCookieSlime.Slimefun.cscorelib2.protection.ProtectableAction;
 
 /**
- * A {@link CrescentHammer} is a {@link SlimefunItem} which allows you to break placed machine blocks
- * with a single right click.
+ * A {@link CrescentHammer} is a {@link SlimefunItem} which allows you to dismantle placed machine blocks
+ * with a single left click, rotate those machine blocks with a right click, and increase/decrease cargo
+ * nodes' channels(frequencies) with shift left/right clicking.
  *
  * @author Linox
  *
@@ -52,27 +55,29 @@ import me.mrCookieSlime.Slimefun.cscorelib2.protection.ProtectableAction;
 public class CrescentHammer extends SimpleSlimefunItem<ItemInteractHandler> implements DamageableItem {
 
     private final boolean isChestTerminalInstalled = SlimefunPlugin.getThirdPartySupportService().isChestTerminalInstalled();
-    private final HashMap<String, Integer> slotCurrents = new HashMap<>();
-
-    private final int cooldown;
+    
     private final boolean damageable;
     private final boolean rotationEnabled;
     private final boolean channelChangeEnabled;
     
+    private final int cooldown;
     private final List<String> whitelist;
+    
     private final HashMap<UUID, Long> lastUses = new HashMap<>();
+    private final HashMap<String, Integer> slotCurrents = new HashMap<>();
 
     public CrescentHammer(Category category, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe) {
         super(category, item, recipeType, recipe);
         
-        Config cfg = MoreTools.getInstance().getCfg();
-        cooldown = cfg.getInt("item-settings.crescent-hammer.cooldown");
-        damageable = cfg.getBoolean("item-settings.crescent-hammer.damageable");
-        whitelist = cfg.getStringList("item-settings.crescent-hammer.rotation-whitelist");
+        FileConfiguration cfg = MoreTools.getInstance().getConfig();
         
+        damageable = cfg.getBoolean("item-settings.crescent-hammer.damageable");
         rotationEnabled = cfg.getBoolean("item-settings.crescent-hammer.features.enable-rotation");
         channelChangeEnabled = cfg.getBoolean("item-settings.crescent-hammer.features.enable-channel-change");
-
+        
+        cooldown = cfg.getInt("item-settings.crescent-hammer.cooldown");
+        whitelist = cfg.getStringList("item-settings.crescent-hammer.rotation-whitelist");
+        
         slotCurrents.put("CARGO_NODE_INPUT", 42);
         slotCurrents.put("CARGO_NODE_OUTPUT", 13);
         slotCurrents.put("CARGO_NODE_OUTPUT_ADVANCED", 42);
@@ -89,13 +94,17 @@ public class CrescentHammer extends SimpleSlimefunItem<ItemInteractHandler> impl
                     Long lastUse = lastUses.get(p.getUniqueId()); 
                     if (lastUse != null) {
                         if ((System.currentTimeMillis() - lastUse) < cooldown) {
-                            p.sendMessage(Messages.CRESCENTHAMMER_COOLDOWN.getMessage().replace("{left-cooldown}", String.valueOf((cooldown - (System.currentTimeMillis() - lastUse)) / 1000)));
+                            p.sendMessage(
+                                Messages.CRESCENTHAMMER_COOLDOWN.getMessage().replaceAll(
+                                    "{left-cooldown}", 
+                                    String.valueOf(cooldown - (System.currentTimeMillis() - lastUse)))
+                                );
                             return;
                         }
                     }
                     lastUses.put(p.getUniqueId(), System.currentTimeMillis());
                     
-                    switch(e.getAction()) {
+                    switch (e.getAction()) {
                         case RIGHT_CLICK_BLOCK:
                             if (p.isSneaking()) {
                                 alterChannel(b, p, -1);
@@ -137,29 +146,30 @@ public class CrescentHammer extends SimpleSlimefunItem<ItemInteractHandler> impl
                     current += change;
                     
                     if (current < 0) {
-                        if (isChestTerminalInstalled) {
-                            current = 16;
-                        } else {
-                            current = 15;
-                        }
+                        current = isChestTerminalInstalled ? 16 : 15;
                     } else if (isChestTerminalInstalled && current > 16) {
                         current = 0;
                     } else if (!isChestTerminalInstalled && current > 15) {
                         current = 0;
                     }
-
-                    BlockStorage.addBlockInfo(b.getLocation(), "frequency", Integer.toString(current));
-
+                    
                     BlockMenu menu = BlockStorage.getInventory(b);
                     int slotCurrent = slotCurrents.get(sfItem.getID());
-                    if (current == 16) {
-                        menu.replaceExistingItem(slotCurrent, new CustomItem(HeadTexture.CHEST_TERMINAL.getAsItemStack(), "&bChannel ID: &3" + (current + 1)));
-                    }
-                    else {
-                        menu.replaceExistingItem(slotCurrent, new CustomItem(MaterialCollections.getAllWoolColors().get(current), "&bChannel ID: &3" + (current + 1)));
+                    
+                    if (current == 16) { 
+                        menu.replaceExistingItem(
+                            slotCurrent, 
+                            new CustomItem(HeadTexture.CHEST_TERMINAL.getAsItemStack(), "&bChannel ID: &3" + (current + 1))
+                        );
+                    } else { 
+                        menu.replaceExistingItem(
+                            slotCurrent, 
+                            new CustomItem(MaterialCollections.getAllWoolColors().get(current), "&bChannel ID: &3" + (current + 1))
+                        );
                     }
                     menu.addMenuClickHandler(slotCurrent, ChestMenuUtils.getEmptyClickHandler());
                     
+                    BlockStorage.addBlockInfo(b.getLocation(), "frequency", Integer.toString(current));
                     p.sendMessage(Messages.CRESCENTHAMMER_CHANNELCHANGESUCCESS.getMessage().replace("{channel}", Integer.toString(current + 1)));
                     return;
                 }
@@ -171,7 +181,9 @@ public class CrescentHammer extends SimpleSlimefunItem<ItemInteractHandler> impl
     private void dismantleBlock(Block b, Player p, ItemStack item) {
         SlimefunItem sfItem = BlockStorage.check(b);
         if (sfItem != null) {
-            if (sfItem instanceof EnergyNetComponent || sfItem instanceof EnergyRegulator || sfItem.getID().startsWith("CARGO_NODE") || sfItem instanceof CargoManager || sfItem instanceof ReactorAccessPort || sfItem instanceof TrashCan) {
+            if (sfItem instanceof EnergyNetComponent || sfItem instanceof EnergyRegulator ||
+                sfItem.getID().startsWith("CARGO_NODE") || sfItem instanceof CargoManager ||
+                sfItem instanceof ReactorAccessPort || sfItem instanceof TrashCan) {
             
                 BlockBreakEvent event = new BlockBreakEvent(b, p);
                 Bukkit.getPluginManager().callEvent(event);

@@ -1,8 +1,12 @@
 package io.github.linoxgh.moretools;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.logging.Level;
 
 import org.bukkit.NamespacedKey;
+import org.bukkit.configuration.Configuration;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -15,8 +19,8 @@ import io.github.thebusybiscuit.slimefun4.implementation.SlimefunItems;
 import me.mrCookieSlime.Slimefun.Lists.RecipeType;
 import me.mrCookieSlime.Slimefun.Objects.Category;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.SlimefunItem;
+import me.mrCookieSlime.Slimefun.api.SlimefunItemStack;
 import me.mrCookieSlime.Slimefun.bstats.bukkit.Metrics;
-import me.mrCookieSlime.Slimefun.cscorelib2.config.Config;
 import me.mrCookieSlime.Slimefun.cscorelib2.item.CustomItem;
 import me.mrCookieSlime.Slimefun.cscorelib2.updater.Updater;
 import me.mrCookieSlime.Slimefun.cscorelib2.updater.GitHubBuildsUpdater;
@@ -25,37 +29,58 @@ public class MoreTools extends JavaPlugin implements SlimefunAddon {
 
     private static MoreTools instance;
     
-    private Config config;
-    private Category moreToolsCat;
+    private final File configFile = new File(getDataFolder().getAbsolutePath() + File.separator + "config.yml");
+    
+    private Category moreToolsCategory;
+    private boolean debug = true;
 
     @Override
     public void onEnable() {
         instance = this;
-        config = new Config(this);
-        String version = getDescription().getVersion();
         
+        saveDefaultConfig();
+        FileConfiguration cfg = getConfig();
+        debug = cfg.getBoolean("options.debugging", true);
+        
+        String version = getDescription().getVersion();
         if (version.startsWith("DEV")) {
-            String cfgVersion = config.getString("version");
-            if (cfgVersion != null && !cfgVersion.equals(version)) {
-                saveResource("config.yml", true);
+            String cfgVersion = cfg.getString("version");
+            
+            Configuration defaultCfg = getConfig().getDefaults();
+            if (cfgVersion == null || !cfgVersion.equals(version)) {
+            
+                getLogger().log(Level.WARNING, "Your config.yml file is outdated. Updating...");
                 
-                config = new Config(this);
-                config.setValue("version", version);
-                config.save();
+                for (String key : defaultCfg.getKeys(true)) {
+                    if (!cfg.contains(key, true)) {
+                        if (debug) getLogger().log(Level.INFO, "Setting \"" + key + "\" to \"" + defaultCfg.get(key) + "\".");
+                        cfg.set(key, defaultCfg.get(key));
+                    }
+                }
+                cfg.set("version", version);
                 
-                getServer().getPluginManager().disablePlugin(this);
-                getLogger().log(Level.SEVERE, "Your config.yml file is outdated, resetting it and then disabling the plugin! Please restart.");
-                return;
+                getLogger().log(Level.INFO, "Finished updating config.yml file. Now saving...");
+                
+                try {
+                    cfg.save(configFile);
+                    getLogger().log(Level.INFO, "Saved config.yml file.");
+                } catch (IOException e) {
+                    getLogger().log(Level.SEVERE, "Failed saving config.yml file.", e);
+                    getServer().getPluginManager().disablePlugin(this);
+                    return;
+                }
             }
-
-            if (config.getBoolean("options.auto-update")) {
+            
+            if (cfg.getBoolean("options.auto-update")) {
                 Updater updater = new GitHubBuildsUpdater(this, this.getFile(), "LinoxGH/MoreTools/build");
                 updater.start();
             }
         }
 
+        if (debug) getLogger().log(Level.INFO, "Setting up event metrics...");
         new Metrics(this, 8780);
         
+        if (debug) getLogger().log(Level.INFO, "Setting up event listeners...");
         new PlayerListener(this);
         
         setupCategories();
@@ -69,11 +94,15 @@ public class MoreTools extends JavaPlugin implements SlimefunAddon {
     }
     
     private void setupCategories() {
-        moreToolsCat = new Category(new NamespacedKey(this, "more_tools_category"), new CustomItem(Items.CRESCENT_HAMMER, "&3More Tools"), 4);
+        if (debug) getLogger().log(Level.INFO, "Setting up categories...");
+        
+        moreToolsCategory = new Category(new NamespacedKey(this, "more_tools_category"), new CustomItem(Items.CRESCENT_HAMMER, "&3More Tools"), 4);
     }
     
     private void setupItems() {
-        new CrescentHammer(moreToolsCat, Items.CRESCENT_HAMMER, RecipeType.ENHANCED_CRAFTING_TABLE, new ItemStack[] {
+        if (debug) getLogger().log(Level.INFO, "Setting up items...");
+        
+        new CrescentHammer(moreToolsCategory, Items.CRESCENT_HAMMER, RecipeType.ENHANCED_CRAFTING_TABLE, new ItemStack[] {
             SlimefunItems.TIN_INGOT, null, SlimefunItems.TIN_INGOT,
             null, SlimefunItems.COPPER_INGOT, null,
             null, SlimefunItems.TIN_INGOT, null
@@ -82,6 +111,8 @@ public class MoreTools extends JavaPlugin implements SlimefunAddon {
     }
     
     private void setupResearches() {
+        if (debug) getLogger().log(Level.INFO, "Setting up researches...");
+        
         registerResearch("crescent_hammer", 7501, "Not A Hammer", 15, Items.CRESCENT_HAMMER);
     }
     
@@ -96,10 +127,6 @@ public class MoreTools extends JavaPlugin implements SlimefunAddon {
         }
         research.register();
     }
-    
-    public Config getCfg() {
-        return config;
-    }
 
     @Override
     public String getBugTrackerURL() {
@@ -113,6 +140,10 @@ public class MoreTools extends JavaPlugin implements SlimefunAddon {
     
     public static MoreTools getInstance() {
         return instance;
+    }
+    
+    public boolean debug() {
+        return debug;
     }
     
 }

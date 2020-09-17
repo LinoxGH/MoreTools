@@ -1,12 +1,14 @@
 ##### !!!! DO NOT CHANGE THIS VALUE !!!!
-version: 1
+version: "UNOFFICIAL"
 
 options:
   auto-update: true
+  # This will make the plugin display more informative messages on console.
+  debugging: true
 
 item-settings:
   crescent-hammer:
-    # This is the cooldown length you need to wait to use the crescent hammer again.
+    # This is the cooldown length players need to wait to use the crescent hammer again.
     # This value must be in milliseconds.
     # Do not set this to negative OR to zero. This will cause dupe bugs to occur.
     cooldown: 500
@@ -28,7 +30,7 @@ messages:
   items:
     crescent-hammer:
       block-breaking: "&cYou cannot break blocks with this!"
-      cooldown: "&cYou cannot do that now. You need to wait &e{left-cooldown} &cmore seconds!"
+      cooldown: "&cYou cannot do that now. You need to wait &e{left-cooldown} &cmore milliseconds!"
       dismantle-fail: "&cYou cannot dismantle this block!"
       rotate-fail: "&cYou cannot rotate this block!"
       channel-change-fail: "&cThis is not a cargo node!"

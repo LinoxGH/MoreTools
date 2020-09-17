@@ -14,7 +14,7 @@ public enum Messages {
     private final String message;
     
     Messages(String path) {
-        message = color(MoreTools.getInstance().getCfg().getString("messages." + path));
+        message = color(MoreTools.getInstance().getConfig().getString("messages." + path));
     }
     
     private String color(String str) {
