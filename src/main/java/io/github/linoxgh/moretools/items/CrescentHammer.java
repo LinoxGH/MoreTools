@@ -75,7 +75,7 @@ public class CrescentHammer extends SimpleSlimefunItem<ItemInteractHandler> impl
         rotationEnabled = cfg.getBoolean("item-settings.crescent-hammer.features.enable-rotation");
         channelChangeEnabled = cfg.getBoolean("item-settings.crescent-hammer.features.enable-channel-change");
         
-        cooldown = cfg.getInteger("item-settings.crescent-hammer.cooldown");
+        cooldown = cfg.getInt("item-settings.crescent-hammer.cooldown");
         whitelist = cfg.getStringList("item-settings.crescent-hammer.rotation-whitelist");
         
         slotCurrents.put("CARGO_NODE_INPUT", 42);
