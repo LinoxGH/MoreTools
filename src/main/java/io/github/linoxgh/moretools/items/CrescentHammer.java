@@ -85,7 +85,12 @@ public class CrescentHammer extends SimpleSlimefunItem<ItemInteractHandler> impl
     
     @Override
     public ItemInteractHandler getItemHandler() {
-        return e -> {
+        return (e, sfItem) -> {
+            if (!sfItem.getID().equals(getID())) {
+                return;
+            }
+            e.setCancelled(true);
+            
             Block b = e.getClickedBlock();
             if (b != null) {
                 Player p = e.getPlayer();

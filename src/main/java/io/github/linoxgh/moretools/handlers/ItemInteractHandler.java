@@ -25,9 +25,11 @@ public interface ItemInteractHandler extends ItemHandler {
      * in his hand.
      * 
      * @param e
-     *            The {@link PlayerInteractEvent} that was triggered
+     *                The {@link PlayerInteractEvent} that was triggered
+     * @param sfItem
+     *                The {@link SlimefunItem} the item that was used
      */
-    void onInteract(PlayerInteractEvent e);
+    void onInteract(PlayerInteractEvent e, SlimefunItem sfItem);
 
     @Override
     default Class<? extends ItemHandler> getIdentifier() {

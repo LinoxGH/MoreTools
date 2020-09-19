@@ -22,8 +22,7 @@ public class PlayerListener implements Listener {
         if (sfItem != null && Slimefun.isEnabled(e.getPlayer(), sfItem, true)) {
             
             if (Slimefun.hasUnlocked(e.getPlayer(), sfItem, true)) {
-                e.setCancelled(true);
-                sfItem.callItemHandler(ItemInteractHandler.class, handler -> handler.onInteract(e));
+                sfItem.callItemHandler(ItemInteractHandler.class, handler -> handler.onInteract(e, sfItem));
             }
         }
     }
