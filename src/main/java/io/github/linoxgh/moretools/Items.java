@@ -19,8 +19,6 @@ public class Items {
     static {
         ItemMeta meta = CRESCENT_HAMMER.getItemMeta();
         List<String> lore = meta.getLore();
-
-        //use ChatColor.(color) to add color codes
         
         if (cfg.getBoolean("item-settings.crescent-hammer.features.enable-rotation")) {
             lore.add(3, ChatColor.YELLOW + "Right Click" + ChatColor.GRAY + " > Rotates the block, if it's rotatable.");
