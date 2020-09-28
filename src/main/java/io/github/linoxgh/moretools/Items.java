@@ -23,12 +23,12 @@ public class Items {
         //use ChatColor.(color) to add color codes
         
         if (cfg.getBoolean("item-settings.crescent-hammer.features.enable-rotation")) {
-            lore.add(3, ChatColor.YELLOW + "Right Click" + ChatColor.GRAY + "> Rotates the block, if it's rotatable.");
+            lore.add(3, ChatColor.YELLOW + "Right Click" + ChatColor.GRAY + " > Rotates the block, if it's rotatable.");
         }
         
         if (cfg.getBoolean("item-settings.crescent-hammer.features.enable-channel-change")) {
-            lore.add(4, ChatColor.YELLOW + "Shift + Left Click" + ChatColor.GRAY + "> Increases the channel of a cargo node.");
-            lore.add(5, ChatColor.YELLOW + "Shift + Right Click" + ChatColor.GRAY + "> Decreases the channel of a cargo node.");
+            lore.add(4, ChatColor.YELLOW + "Shift + Left Click" + ChatColor.GRAY + " > Increases the channel of a cargo node.");
+            lore.add(5, ChatColor.YELLOW + "Shift + Right Click" + ChatColor.GRAY + " > Decreases the channel of a cargo node.");
         }
         
         meta.setLore(lore);
