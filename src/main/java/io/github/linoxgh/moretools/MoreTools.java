@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
 
+import org.bstats.bukkit.Metrics;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -20,7 +21,6 @@ import me.mrCookieSlime.Slimefun.Lists.RecipeType;
 import me.mrCookieSlime.Slimefun.Objects.Category;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.SlimefunItem;
 import me.mrCookieSlime.Slimefun.api.SlimefunItemStack;
-import me.mrCookieSlime.Slimefun.bstats.bukkit.Metrics;
 import me.mrCookieSlime.Slimefun.cscorelib2.item.CustomItem;
 import me.mrCookieSlime.Slimefun.cscorelib2.updater.Updater;
 import me.mrCookieSlime.Slimefun.cscorelib2.updater.GitHubBuildsUpdater;
@@ -77,8 +77,8 @@ public class MoreTools extends JavaPlugin implements SlimefunAddon {
             }
         }
 
-        if (debug) getLogger().log(Level.INFO, "Setting up event metrics...");
-        new Metrics(this, 8780);
+        if (debug) getLogger().log(Level.INFO, "Setting up metrics...");
+        Metrics metrics = new Metrics(this, 8780);
         
         if (debug) getLogger().log(Level.INFO, "Setting up event listeners...");
         new PlayerListener(this);
