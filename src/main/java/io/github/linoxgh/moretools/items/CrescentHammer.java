@@ -54,7 +54,7 @@ import me.mrCookieSlime.Slimefun.cscorelib2.protection.ProtectableAction;
  */
 public class CrescentHammer extends SimpleSlimefunItem<ItemInteractHandler> implements DamageableItem {
 
-    private final boolean isChestTerminalInstalled = SlimefunPlugin.getThirdPartySupportService().isChestTerminalInstalled();
+    private final boolean isChestTerminalInstalled = SlimefunPlugin.getIntegrations().isChestTerminalInstalled();
     
     private final boolean damageable;
     private final boolean rotationEnabled;
