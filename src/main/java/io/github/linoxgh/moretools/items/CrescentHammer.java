@@ -100,7 +100,7 @@ public class CrescentHammer extends SimpleSlimefunItem<ItemInteractHandler> impl
                     if (lastUse != null) {
                         if ((System.currentTimeMillis() - lastUse) < cooldown) {
                             p.sendMessage(
-                                Messages.CRESCENTHAMMER_COOLDOWN.getMessage().replaceAll(
+                                Messages.CRESCENTHAMMER_COOLDOWN.getMessage().replace(
                                     "{left-cooldown}", 
                                     String.valueOf(cooldown - (System.currentTimeMillis() - lastUse)))
                                 );

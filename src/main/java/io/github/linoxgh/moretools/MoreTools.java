@@ -76,7 +76,7 @@ public class MoreTools extends JavaPlugin implements SlimefunAddon {
                 updater.start();
             }
         }
-
+      
         if (debug) getLogger().log(Level.INFO, "Setting up metrics...");
         Metrics metrics = new Metrics(this, 8780);
         
