@@ -31,6 +31,7 @@ import io.github.thebusybiscuit.slimefun4.implementation.items.cargo.ReactorAcce
 import io.github.thebusybiscuit.slimefun4.implementation.items.cargo.TrashCan;
 import io.github.thebusybiscuit.slimefun4.implementation.items.electric.EnergyRegulator;
 import io.github.thebusybiscuit.slimefun4.utils.ChestMenuUtils;
+import io.github.thebusybiscuit.slimefun4.utils.ColoredMaterial;
 import io.github.thebusybiscuit.slimefun4.utils.HeadTexture;
 import me.mrCookieSlime.Slimefun.Lists.RecipeType;
 import me.mrCookieSlime.Slimefun.Objects.Category;
@@ -39,7 +40,6 @@ import me.mrCookieSlime.Slimefun.api.BlockStorage;
 import me.mrCookieSlime.Slimefun.api.SlimefunItemStack;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
 import me.mrCookieSlime.Slimefun.cscorelib2.item.CustomItem;
-import me.mrCookieSlime.Slimefun.cscorelib2.materials.MaterialCollections;
 import me.mrCookieSlime.Slimefun.cscorelib2.protection.ProtectableAction;
 
 /**
@@ -169,7 +169,7 @@ public class CrescentHammer extends SimpleSlimefunItem<ItemInteractHandler> impl
                     } else { 
                         menu.replaceExistingItem(
                             slotCurrent, 
-                            new CustomItem(MaterialCollections.getAllWoolColors().get(current), "&bChannel ID: &3" + (current + 1))
+                            new CustomItem(ColoredMaterial.WOOL.get(channel), "&bChannel ID: &3" + (current + 1))
                         );
                     }
                     menu.addMenuClickHandler(slotCurrent, ChestMenuUtils.getEmptyClickHandler());
