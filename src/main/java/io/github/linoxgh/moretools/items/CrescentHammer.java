@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
+import io.github.thebusybiscuit.slimefun4.core.handlers.ToolUseHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.Effect;
 import org.bukkit.Material;
@@ -12,7 +13,6 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.Directional;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
 
@@ -22,8 +22,6 @@ import io.github.linoxgh.moretools.handlers.ItemInteractHandler;
 
 import io.github.thebusybiscuit.slimefun4.core.attributes.DamageableItem;
 import io.github.thebusybiscuit.slimefun4.core.attributes.EnergyNetComponent;
-import io.github.thebusybiscuit.slimefun4.core.handlers.BlockBreakHandler;
-import io.github.thebusybiscuit.slimefun4.implementation.SlimefunItems;
 import io.github.thebusybiscuit.slimefun4.implementation.SlimefunPlugin;
 import io.github.thebusybiscuit.slimefun4.implementation.items.SimpleSlimefunItem;
 import io.github.thebusybiscuit.slimefun4.implementation.items.cargo.CargoManager;
@@ -86,7 +84,7 @@ public class CrescentHammer extends SimpleSlimefunItem<ItemInteractHandler> impl
     @Override
     public ItemInteractHandler getItemHandler() {
         return (e, sfItem) -> {
-            if (!sfItem.getID().equals(getID())) {
+            if (!sfItem.getId().equals(getId())) {
                 return;
             }
             e.setCancelled(true);
@@ -143,7 +141,7 @@ public class CrescentHammer extends SimpleSlimefunItem<ItemInteractHandler> impl
         
         SlimefunItem sfItem = BlockStorage.check(b);
         if (sfItem != null) {
-            if (sfItem.getID().startsWith("CARGO_NODE_")) {
+            if (sfItem.getId().startsWith("CARGO_NODE_")) {
             
                 String frequency = BlockStorage.getLocationInfo(b.getLocation(), "frequency");
                 if (frequency != null) {
@@ -159,7 +157,7 @@ public class CrescentHammer extends SimpleSlimefunItem<ItemInteractHandler> impl
                     }
                     
                     BlockMenu menu = BlockStorage.getInventory(b);
-                    int slotCurrent = slotCurrents.get(sfItem.getID());
+                    int slotCurrent = slotCurrents.get(sfItem.getId());
                     
                     if (current == 16) { 
                         menu.replaceExistingItem(
@@ -187,7 +185,7 @@ public class CrescentHammer extends SimpleSlimefunItem<ItemInteractHandler> impl
         SlimefunItem sfItem = BlockStorage.check(b);
         if (sfItem != null) {
             if (sfItem instanceof EnergyNetComponent || sfItem instanceof EnergyRegulator ||
-                sfItem.getID().startsWith("CARGO_NODE") || sfItem instanceof CargoManager ||
+                sfItem.getId().startsWith("CARGO_NODE") || sfItem instanceof CargoManager ||
                 sfItem instanceof ReactorAccessPort || sfItem instanceof TrashCan) {
             
                 BlockBreakEvent event = new BlockBreakEvent(b, p);
@@ -232,7 +230,7 @@ public class CrescentHammer extends SimpleSlimefunItem<ItemInteractHandler> impl
                     if (b.getType() == Material.PLAYER_WALL_HEAD) {
                         SlimefunItem sfItem = BlockStorage.check(b);
                         if (sfItem != null) {
-                            if (sfItem.getID().startsWith("CARGO_NODE")) {
+                            if (sfItem.getId().startsWith("CARGO_NODE")) {
                                 SlimefunPlugin.getNetworkManager().updateAllNetworks(b.getLocation());
                             }
                         }
@@ -244,22 +242,11 @@ public class CrescentHammer extends SimpleSlimefunItem<ItemInteractHandler> impl
         p.sendMessage(Messages.CRESCENTHAMMER_ROTATEFAIL.getMessage());
     }
     
-    private BlockBreakHandler getBlockBreakHandler() {
-        return new BlockBreakHandler() {
-        
-            @Override
-            public boolean onBlockBreak(BlockBreakEvent e, ItemStack item, int fortune, List<ItemStack> drops) {
-                if (isItem(item)) {
-                    e.setCancelled(true);
-                    e.getPlayer().sendMessage(Messages.CRESCENTHAMMER_BLOCKBREAKING.getMessage());
-                    return true;
-                }
-                return false;
-            }
-            
-            @Override
-            public boolean isPrivate() {
-                return false;
+    private ToolUseHandler getToolUseHandler() {
+        return (e, item, i, list) -> {
+            if (isItem(item)) {
+                e.setCancelled(true);
+                e.getPlayer().sendMessage(Messages.CRESCENTHAMMER_BLOCKBREAKING.getMessage());
             }
         };
     }
@@ -267,7 +254,7 @@ public class CrescentHammer extends SimpleSlimefunItem<ItemInteractHandler> impl
     @Override
     public void preRegister() {
         super.preRegister();
-        addItemHandler(getBlockBreakHandler());
+        addItemHandler(getToolUseHandler());
     }
     
     @Override

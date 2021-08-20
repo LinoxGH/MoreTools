@@ -6,9 +6,8 @@ import org.bukkit.event.player.PlayerInteractEvent;
 
 import io.github.linoxgh.moretools.MoreTools;
 import io.github.linoxgh.moretools.handlers.ItemInteractHandler;
-
+import io.github.thebusybiscuit.slimefun4.utils.SlimefunUtils;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.SlimefunItem;
-import me.mrCookieSlime.Slimefun.api.Slimefun;
 
 public class PlayerListener implements Listener {
 
@@ -18,12 +17,10 @@ public class PlayerListener implements Listener {
     
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent e) {
-        SlimefunItem sfItem = SlimefunItem.getByItem(e.getItem());
-        if (sfItem != null && Slimefun.isEnabled(e.getPlayer(), sfItem, true)) {
-            
-            if (Slimefun.hasUnlocked(e.getPlayer(), sfItem, true)) {
-                sfItem.callItemHandler(ItemInteractHandler.class, handler -> handler.onInteract(e, sfItem));
-            }
+        if (SlimefunUtils.canPlayerUseItem(e.getPlayer(), e.getItem(), true)) {
+            SlimefunItem sfItem = SlimefunItem.getByItem(e.getItem());
+            if (sfItem == null) return;
+            sfItem.callItemHandler(ItemInteractHandler.class, handler -> handler.onInteract(e, sfItem));
         }
     }
 }
