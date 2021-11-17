@@ -7,7 +7,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import io.github.linoxgh.moretools.MoreTools;
 import io.github.linoxgh.moretools.handlers.ItemInteractHandler;
 import io.github.thebusybiscuit.slimefun4.utils.SlimefunUtils;
-import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.SlimefunItem;
+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 
 public class PlayerListener implements Listener {
 

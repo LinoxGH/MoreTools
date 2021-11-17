@@ -14,16 +14,14 @@ import org.bukkit.plugin.java.JavaPlugin;
 import io.github.linoxgh.moretools.items.CrescentHammer;
 import io.github.linoxgh.moretools.listeners.PlayerListener;
 
+import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
+import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
+import io.github.thebusybiscuit.slimefun4.api.researches.Research;
 import io.github.thebusybiscuit.slimefun4.api.SlimefunAddon;
-import io.github.thebusybiscuit.slimefun4.core.researching.Research;
 import io.github.thebusybiscuit.slimefun4.implementation.SlimefunItems;
-import me.mrCookieSlime.Slimefun.Lists.RecipeType;
-import me.mrCookieSlime.Slimefun.Objects.Category;
-import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.SlimefunItem;
-import me.mrCookieSlime.Slimefun.api.SlimefunItemStack;
-import me.mrCookieSlime.Slimefun.cscorelib2.item.CustomItem;
-import me.mrCookieSlime.Slimefun.cscorelib2.updater.Updater;
-import me.mrCookieSlime.Slimefun.cscorelib2.updater.GitHubBuildsUpdater;
+import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
+import io.github.thebusybiscuit.slimefun4.libraries.dough.updater.GitHubBuildsUpdater;
 
 public class MoreTools extends JavaPlugin implements SlimefunAddon {
 
@@ -31,7 +29,7 @@ public class MoreTools extends JavaPlugin implements SlimefunAddon {
     
     private final File configFile = new File(getDataFolder().getAbsolutePath() + File.separator + "config.yml");
     
-    private Category moreToolsCategory;
+    private ItemGroup moreToolsItemGroup;
     private boolean debug = true;
 
     @Override
@@ -72,8 +70,7 @@ public class MoreTools extends JavaPlugin implements SlimefunAddon {
             }
             
             if (cfg.getBoolean("options.auto-update")) {
-                Updater updater = new GitHubBuildsUpdater(this, this.getFile(), "LinoxGH/MoreTools/build");
-                updater.start();
+                new GitHubBuildsUpdater(this, this.getFile(), "LinoxGH/MoreTools/build").start();
             }
         }
       
@@ -96,13 +93,13 @@ public class MoreTools extends JavaPlugin implements SlimefunAddon {
     private void setupCategories() {
         if (debug) getLogger().log(Level.INFO, "Setting up categories...");
         
-        moreToolsCategory = new Category(new NamespacedKey(this, "more_tools_category"), new CustomItem(Items.CRESCENT_HAMMER, "&3More Tools"), 4);
+        moreToolsItemGroup = new ItemGroup(new NamespacedKey(this, "more_tools_category"), new CustomItemStack(Items.CRESCENT_HAMMER, "&3More Tools"), 4);
     }
     
     private void setupItems() {
         if (debug) getLogger().log(Level.INFO, "Setting up items...");
         
-        new CrescentHammer(moreToolsCategory, Items.CRESCENT_HAMMER, RecipeType.ENHANCED_CRAFTING_TABLE, new ItemStack[] {
+        new CrescentHammer(moreToolsItemGroup, Items.CRESCENT_HAMMER, RecipeType.ENHANCED_CRAFTING_TABLE, new ItemStack[] {
             SlimefunItems.TIN_INGOT, null, SlimefunItems.TIN_INGOT,
             null, SlimefunItems.COPPER_INGOT, null,
             null, SlimefunItems.TIN_INGOT, null
